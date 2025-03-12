@@ -6,6 +6,4 @@ import TheWelcome from './_module_product_load.vue'
   <TheWelcome />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

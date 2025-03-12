@@ -1,0 +1,143 @@
+[
+    {
+        "formtypeID": 1,
+        "formtypeName": "Enfamil Infant PWD",
+        "formtypeShortName": "Enfamil Infant",
+        "formtypeContext": ["Additive"],
+        "formtypeCanBeDonor": false,
+        "formtypeCaloricDensity": 5.10000,
+        "formtypeDisplacement": 0.77000,
+        "formtypeExpirationAfterPrep": 30,
+        "formtypeExpirationWhenPrep": 24,
+        "formtypeCanBeFrozen": false,
+        "items": [
+            {
+                "formtypeProductCode": "174004",
+                "formtypeitemName": "Enfamil Infant PWD (12.5 oz)",
+                "formfactorType": "Can",
+                "formtypeMeasurementUnit": "mL",
+                "formtypeMeasurementVolume": 240,
+                "formfactors": [
+                    {
+                        "formfactorType": "Bottle",
+                        "formfactorBarcode": "1234567890123",
+                        "formfactorUnitQuantity": 6
+                    },
+                    {
+                        "formfactorType": "Can",
+                        "formfactorBarcode": "9876543210987",
+                        "formfactorUnitQuantity": 12
+                    }
+                ]
+            },
+            {
+                "formtypeProductCode": "IF-002",
+                "formtypeitemName": "Infant Formula Powder",
+                "formfactorType": "Powder",
+                "formtypeMeasurementUnit": "g",
+                "formtypeMeasurementVolume": 400,
+                "formfactors": [
+                    {
+                        "formfactorType": "Box",
+                        "formfactorBarcode": "1122334455667",
+                        "formfactorUnitQuantity": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "formtypeID": 1,
+        "formtypeName": "Infant Formula",
+        "formtypeShortName": "Formula",
+        "formtypeContext": ["Hospital", "Home Use"],
+        "formtypeCanBeDonor": false,
+        "formtypeCaloricDensity": 20,
+        "formtypeDisplacement": 0.8,
+        "formtypeExpirationAfterPrep": 24,
+        "formtypeExpirationWhenPrep": 6,
+        "formtypeCanBeFrozen": true,
+        "items": [
+            {
+                "formtypeProductCode": "IF-001",
+                "formtypeitemName": "Infant Formula Liquid",
+                "formfactorType": "Liquid",
+                "formtypeMeasurementUnit": "mL",
+                "formtypeMeasurementVolume": 240,
+                "formfactors": [
+                    {
+                        "formfactorType": "Bottle",
+                        "formfactorBarcode": "1234567890123",
+                        "formfactorUnitQuantity": 6
+                    },
+                    {
+                        "formfactorType": "Can",
+                        "formfactorBarcode": "9876543210987",
+                        "formfactorUnitQuantity": 12
+                    }
+                ]
+            },
+            {
+                "formtypeProductCode": "IF-002",
+                "formtypeitemName": "Infant Formula Powder",
+                "formfactorType": "Powder",
+                "formtypeMeasurementUnit": "g",
+                "formtypeMeasurementVolume": 400,
+                "formfactors": [
+                    {
+                        "formfactorType": "Box",
+                        "formfactorBarcode": "1122334455667",
+                        "formfactorUnitQuantity": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "formtypeID": 1,
+        "formtypeName": "Infant Formula",
+        "formtypeShortName": "Formula",
+        "formtypeContext": ["Hospital", "Home Use"],
+        "formtypeCanBeDonor": false,
+        "formtypeCaloricDensity": 20,
+        "formtypeDisplacement": 0.8,
+        "formtypeExpirationAfterPrep": 24,
+        "formtypeExpirationWhenPrep": 6,
+        "formtypeCanBeFrozen": true,
+        "items": [
+            {
+                "formtypeProductCode": "IF-001",
+                "formtypeitemName": "Infant Formula Liquid",
+                "formfactorType": "Liquid",
+                "formtypeMeasurementUnit": "mL",
+                "formtypeMeasurementVolume": 240,
+                "formfactors": [
+                    {
+                        "formfactorType": "Bottle",
+                        "formfactorBarcode": "1234567890123",
+                        "formfactorUnitQuantity": 6
+                    },
+                    {
+                        "formfactorType": "Can",
+                        "formfactorBarcode": "9876543210987",
+                        "formfactorUnitQuantity": 12
+                    }
+                ]
+            },
+            {
+                "formtypeProductCode": "IF-002",
+                "formtypeitemName": "Infant Formula Powder",
+                "formfactorType": "Powder",
+                "formtypeMeasurementUnit": "g",
+                "formtypeMeasurementVolume": 400,
+                "formfactors": [
+                    {
+                        "formfactorType": "Box",
+                        "formfactorBarcode": "1122334455667",
+                        "formfactorUnitQuantity": 1
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,6 +1,14 @@
 <script setup>
 import ExpandCard from './components/ProductLoad/ExpandCard.vue'
 import ButtonArray from './components/ProductLoad/ButtonArray.vue';
+import { onMounted } from 'vue';
+import { useProductStore } from './stores/product';
+
+const productStore = useProductStore()
+
+onMounted(() => {
+  productStore.getProductsWithRelatedTables()
+})
 </script>
 
 <template>

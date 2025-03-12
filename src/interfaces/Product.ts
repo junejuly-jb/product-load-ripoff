@@ -33,8 +33,8 @@ export interface Manufacturer {
     ManufacturerName: string;
     ManufacturerDescription: string;
     ManufacturerStatus: number;
-    createdBy: string;
-    updatedBy: string;
+    createdBy: string | null;
+    updatedBy: string | null;
     created_at: string;
     updated_at: string;
 }

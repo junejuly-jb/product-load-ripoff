@@ -1,5 +1,6 @@
 <script setup>
 import ExpandCard from './components/ProductLoad/ExpandCard.vue'
+import ButtonArray from './components/ProductLoad/ButtonArray.vue';
 </script>
 
 <template>
@@ -7,8 +8,9 @@ import ExpandCard from './components/ProductLoad/ExpandCard.vue'
     <div class="pl__heading">
       <h2>Product Load</h2>
     </div>
-
     <div class="products__container bg_red">
+      <ButtonArray/>
+      <div class="my-7"></div>
       <h2>Product List</h2>
       <div class="w-25">
         <v-text-field clearable label="Search" variant="underlined"></v-text-field>

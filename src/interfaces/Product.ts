@@ -1,4 +1,4 @@
-interface NutritionProductTypes {
+export interface NutritionProductTypes {
     formtypeID: number;
     formtypeName: string;
     formtypeShortName: string;
@@ -12,7 +12,7 @@ interface NutritionProductTypes {
     items: NutritionProductTypeItems[]
 }
 
-interface NutritionProductTypeItems {
+export interface NutritionProductTypeItems {
     formtypeProductCode: string;
     formtypeitemName: string | null;
     formfactorType: string;
@@ -21,9 +21,10 @@ interface NutritionProductTypeItems {
     formfactors: NutritionProductTypeFormFactors[]
 }
   
-interface NutritionProductTypeFormFactors {
+export interface NutritionProductTypeFormFactors {
     formfactorType: string;
     formfactorBarcode: string | null;
+    formfactorVolume: number | null;
     formfactorUnitQuantity: number;
 }
   

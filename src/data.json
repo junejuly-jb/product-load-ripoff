@@ -1,140 +1,160 @@
 [
     {
-        "formtypeID": 1,
-        "formtypeName": "Enfamil Infant PWD",
-        "formtypeShortName": "Enfamil Infant",
+        "formtypeID": 1001,
+        "formtypeName": "Alfamino JUNIOR",
+        "formtypeShortName": "",
         "formtypeContext": ["Additive"],
         "formtypeCanBeDonor": false,
-        "formtypeCaloricDensity": 5.10000,
-        "formtypeDisplacement": 0.77000,
-        "formtypeExpirationAfterPrep": 30,
+        "formtypeCaloricDensity": 4.60000,
+        "formtypeDisplacement": 0.73000,
+        "formtypeExpirationAfterPrep": "30 days",
         "formtypeExpirationWhenPrep": 24,
         "formtypeCanBeFrozen": false,
         "items": [
             {
-                "formtypeProductCode": "174004",
-                "formtypeitemName": "Enfamil Infant PWD (12.5 oz)",
+                "formtypeProductCode": "12509279",
+                "formtypeitemName": "Alfamino JUNIOR",
+                "formfactorType": "Can",
+                "formtypeMeasurementUnit": "g",
+                "formtypeMeasurementVolume": 400,
+                "formfactors": [
+                    {
+                        "formfactorType": "Case",
+                        "formfactorBarcode": "8445290072535",
+                        "formfactorVolume": "",
+                        "formfactorUnitQuantity": 6
+                    },
+                    {
+                        "formfactorType": "Can",
+                        "formfactorBarcode": "8445290072542",
+                        "formfactorVolume": 400,
+                        "formfactorUnitQuantity": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "formtypeID": 1002,
+        "formtypeName": "Beneprotein",
+        "formtypeShortName": "",
+        "formtypeContext": ["Additive"],
+        "formtypeCanBeDonor": false,
+        "formtypeCaloricDensity": 3.6,
+        "formtypeDisplacement": 1.8,
+        "formtypeExpirationAfterPrep": "30 days",
+        "formtypeExpirationWhenPrep": 6,
+        "formtypeCanBeFrozen": true,
+        "items": [
+            {
+                "formtypeProductCode": "12452313",
+                "formtypeitemName": "Beneprotein",
+                "formfactorType": "Sachet",
+                "formtypeMeasurementUnit": "g",
+                "formtypeMeasurementVolume": 7,
+                "formfactors": [
+                    {
+                        "formfactorType": "Case",
+                        "formfactorBarcode": "10043900863655",
+                        "formfactorVolume": 0,
+                        "formfactorUnitQuantity": 75
+                    },
+                    {
+                        "formfactorType": "Sachet",
+                        "formfactorBarcode": "043900863658",
+                        "formfactorVolume": 7,
+                        "formfactorUnitQuantity": 0
+                    }
+                ]
+            },
+            {
+                "formtypeProductCode": "12166668",
+                "formtypeitemName": "Beneprotein",
+                "formfactorType": "Powder",
+                "formtypeMeasurementUnit": "g",
+                "formtypeMeasurementVolume": 227,
+                "formfactors": [
+                    {
+                        "formfactorType": "Case",
+                        "formfactorBarcode": "10043900291700",
+                        "formfactorVolume": 0,
+                        "formfactorUnitQuantity": 6
+                    },
+                    {
+                        "formfactorType": "Can",
+                        "formfactorBarcode": "043900291703",
+                        "formfactorVolume": 227,
+                        "formfactorUnitQuantity": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "formtypeID": 1003,
+        "formtypeName": "Enfamil A+ SOY",
+        "formtypeShortName": "",
+        "formtypeContext": ["Additive"],
+        "formtypeCanBeDonor": false,
+        "formtypeCaloricDensity": 40,
+        "formtypeDisplacement": 1,
+        "formtypeExpirationAfterPrep": 27,
+        "formtypeExpirationWhenPrep": 27,
+        "formtypeCanBeFrozen": false,
+        "items": [
+            {
+                "formtypeProductCode": "3276942",
+                "formtypeitemName": "Enfamil A+ SOY ",
                 "formfactorType": "Can",
                 "formtypeMeasurementUnit": "mL",
-                "formtypeMeasurementVolume": 240,
+                "formtypeMeasurementVolume": 385,
                 "formfactors": [
                     {
-                        "formfactorType": "Bottle",
-                        "formfactorBarcode": "1234567890123",
-                        "formfactorUnitQuantity": 6
+                        "formfactorType": "Case",
+                        "formfactorBarcode": "056796906538",
+                        "formfactorVolume": 0,
+                        "formfactorUnitQuantity": 12
                     },
                     {
                         "formfactorType": "Can",
-                        "formfactorBarcode": "9876543210987",
-                        "formfactorUnitQuantity": 12
-                    }
-                ]
-            },
-            {
-                "formtypeProductCode": "IF-002",
-                "formtypeitemName": "Infant Formula Powder",
-                "formfactorType": "Powder",
-                "formtypeMeasurementUnit": "g",
-                "formtypeMeasurementVolume": 400,
-                "formfactors": [
-                    {
-                        "formfactorType": "Box",
-                        "formfactorBarcode": "1122334455667",
-                        "formfactorUnitQuantity": 1
+                        "formfactorBarcode": "",
+                        "formfactorVolume": 385,
+                        "formfactorUnitQuantity": 0
                     }
                 ]
             }
         ]
     },
     {
-        "formtypeID": 1,
-        "formtypeName": "Infant Formula",
-        "formtypeShortName": "Formula",
-        "formtypeContext": ["Hospital", "Home Use"],
+        "formtypeID": 1004,
+        "formtypeName": "KetoCal 4:1",
+        "formtypeShortName": "",
+        "formtypeContext": ["Feed Base","Additive"],
         "formtypeCanBeDonor": false,
-        "formtypeCaloricDensity": 20,
-        "formtypeDisplacement": 0.8,
-        "formtypeExpirationAfterPrep": 24,
-        "formtypeExpirationWhenPrep": 6,
-        "formtypeCanBeFrozen": true,
+        "formtypeCaloricDensity": 7.0,
+        "formtypeDisplacement": 1,
+        "formtypeExpirationAfterPrep": "30 days",
+        "formtypeExpirationWhenPrep": 27,
+        "formtypeCanBeFrozen": false,
         "items": [
             {
-                "formtypeProductCode": "IF-001",
-                "formtypeitemName": "Infant Formula Liquid",
-                "formfactorType": "Liquid",
-                "formtypeMeasurementUnit": "mL",
-                "formtypeMeasurementVolume": 240,
-                "formfactors": [
-                    {
-                        "formfactorType": "Bottle",
-                        "formfactorBarcode": "1234567890123",
-                        "formfactorUnitQuantity": 6
-                    },
-                    {
-                        "formfactorType": "Can",
-                        "formfactorBarcode": "9876543210987",
-                        "formfactorUnitQuantity": 12
-                    }
-                ]
-            },
-            {
-                "formtypeProductCode": "IF-002",
-                "formtypeitemName": "Infant Formula Powder",
-                "formfactorType": "Powder",
+                "formtypeProductCode": "101777",
+                "formtypeitemName": "KetoCal 4:1/Vanilla",
+                "formfactorType": "Can",
                 "formtypeMeasurementUnit": "g",
                 "formtypeMeasurementVolume": 400,
                 "formfactors": [
                     {
-                        "formfactorType": "Box",
-                        "formfactorBarcode": "1122334455667",
-                        "formfactorUnitQuantity": 1
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "formtypeID": 1,
-        "formtypeName": "Infant Formula",
-        "formtypeShortName": "Formula",
-        "formtypeContext": ["Hospital", "Home Use"],
-        "formtypeCanBeDonor": false,
-        "formtypeCaloricDensity": 20,
-        "formtypeDisplacement": 0.8,
-        "formtypeExpirationAfterPrep": 24,
-        "formtypeExpirationWhenPrep": 6,
-        "formtypeCanBeFrozen": true,
-        "items": [
-            {
-                "formtypeProductCode": "IF-001",
-                "formtypeitemName": "Infant Formula Liquid",
-                "formfactorType": "Liquid",
-                "formtypeMeasurementUnit": "mL",
-                "formtypeMeasurementVolume": 240,
-                "formfactors": [
-                    {
-                        "formfactorType": "Bottle",
-                        "formfactorBarcode": "1234567890123",
+                        "formfactorType": "Case",
+                        "formfactorBarcode": "749735166703",
+                        "formfactorVolume": "",
                         "formfactorUnitQuantity": 6
                     },
                     {
                         "formfactorType": "Can",
-                        "formfactorBarcode": "9876543210987",
-                        "formfactorUnitQuantity": 12
-                    }
-                ]
-            },
-            {
-                "formtypeProductCode": "IF-002",
-                "formtypeitemName": "Infant Formula Powder",
-                "formfactorType": "Powder",
-                "formtypeMeasurementUnit": "g",
-                "formtypeMeasurementVolume": 400,
-                "formfactors": [
-                    {
-                        "formfactorType": "Box",
-                        "formfactorBarcode": "1122334455667",
-                        "formfactorUnitQuantity": 1
+                        "formfactorBarcode": "749735166703",
+                        "formfactorVolume": 300,
+                        "formfactorUnitQuantity": 0
                     }
                 ]
             }

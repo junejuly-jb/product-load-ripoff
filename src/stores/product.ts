@@ -9,11 +9,12 @@ export const useProductStore = defineStore('product', () => {
   const products = ref<Array<NutritionProductTypes>>([])
   const manufacturers = ref<Array<Manufacturer>>([]);
   const formfactorTypes = ref<Array<FormFactorTypes>>([]);
+  const productRelatedTableDialog = ref(false);
   
   const getProductsWithRelatedTables = () => {
     manufacturers.value = JSON.parse(JSON.stringify(JSONmanufacturers))
     formfactorTypes.value = JSON.parse(JSON.stringify(JSONFormfactorTypes))
   }
 
-  return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables }
+  return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog }
 })

@@ -3,6 +3,7 @@ import ExpandCard from './components/ProductLoad/ExpandCard.vue'
 import ButtonArray from './components/ProductLoad/ButtonArray.vue';
 import { onMounted } from 'vue';
 import { useProductStore } from './stores/product';
+import ProductRelatedTableDialog from './components/ProductLoad/Dialogs/ProductRelatedTableDialog.vue';
 
 const productStore = useProductStore()
 
@@ -13,6 +14,7 @@ onMounted(() => {
 
 <template>
   <div>
+    <ProductRelatedTableDialog />
     <div class="pl__heading">
       <h2>Product Load</h2>
     </div>

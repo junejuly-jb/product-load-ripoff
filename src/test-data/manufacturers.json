@@ -1,0 +1,172 @@
+[
+    {
+        "ManufacturerID": 1,
+        "ManufacturerName": "TIMELESS SYSTEM",
+        "ManufacturerDescription": "Manufacturer for products added by timeless",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 2,
+        "ManufacturerName": "MILKBANK",
+        "ManufacturerDescription": "Manufacturer for donor milk",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 3,
+        "ManufacturerName": "Undefined",
+        "ManufacturerDescription": "Undefined",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 11,
+        "ManufacturerName": "ABBOTT",
+        "ManufacturerDescription": "ABBOTT",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 12,
+        "ManufacturerName": "CERA PRODUCTS",
+        "ManufacturerDescription": "CERA PRODUCTS",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 13,
+        "ManufacturerName": "GERBER",
+        "ManufacturerDescription": "GERBER",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 14,
+        "ManufacturerName": "HORMEL HEALTH LABS",
+        "ManufacturerDescription": "HORMEL HEALTH LABS",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 15,
+        "ManufacturerName": "MEDICA NUTRITION",
+        "ManufacturerDescription": "MEDICA NUTRITION",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 16,
+        "ManufacturerName": "MEDOLAC",
+        "ManufacturerDescription": "MEDOLAC",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 17,
+        "ManufacturerName": "MJN",
+        "ManufacturerDescription": "MEAD JOHNSON",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:01",
+        "updated_at": "2021-10-15 17:27:01"
+    },
+    {
+        "ManufacturerID": 18,
+        "ManufacturerName": "NATURES ONE",
+        "ManufacturerDescription": "NATURES ONE",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:02",
+        "updated_at": "2021-10-15 17:27:02"
+    },
+    {
+        "ManufacturerID": 19,
+        "ManufacturerName": "NESTLE",
+        "ManufacturerDescription": "NESTLE",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:02",
+        "updated_at": "2021-10-15 17:27:02"
+    },
+    {
+        "ManufacturerID": 20,
+        "ManufacturerName": "NUTRICIA",
+        "ManufacturerDescription": "NUTRICIA",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:02",
+        "updated_at": "2021-10-15 17:27:02"
+    },
+    {
+        "ManufacturerID": 21,
+        "ManufacturerName": "PROLACTA",
+        "ManufacturerDescription": "PROLACTA",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:02",
+        "updated_at": "2021-10-15 17:27:02"
+    },
+    {
+        "ManufacturerID": 22,
+        "ManufacturerName": "NI-Q",
+        "ManufacturerDescription": "NI-Q",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2021-10-15 17:27:02",
+        "updated_at": "2021-10-15 17:27:02"
+    },
+    {
+        "ManufacturerID": 23,
+        "ManufacturerName": "PARAPHARMA TECH",
+        "ManufacturerDescription": "PARAPHARMA TECH",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": "2022-01-19 17:27:02",
+        "updated_at": "2022-01-19 17:27:02"
+    },
+    {
+        "ManufacturerID": 24,
+        "ManufacturerName": "Other",
+        "ManufacturerDescription": "Other",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
+    }
+]

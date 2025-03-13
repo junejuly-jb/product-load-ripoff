@@ -12,6 +12,7 @@ export const useProductStore = defineStore('product', () => {
   const productRelatedTableDialog = ref(false);
   
   const getProductsWithRelatedTables = () => {
+    products.value = JSON.parse(JSON.stringify(JSONproducts))
     manufacturers.value = JSON.parse(JSON.stringify(JSONmanufacturers))
     formfactorTypes.value = JSON.parse(JSON.stringify(JSONFormfactorTypes))
   }

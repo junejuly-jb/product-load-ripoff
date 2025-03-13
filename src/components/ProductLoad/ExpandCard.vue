@@ -1,12 +1,15 @@
 <template>
   <v-expansion-panels>
-    <v-expansion-panel>
+    <v-expansion-panel 
+      v-for="product in productStore.products"
+      :key="product.formtypeID"
+    >
       <v-expansion-panel-title>
         <div class="w-100 d-flex justify-sm-space-between align-center">
           <div class="d-flex align-center">
-            <v-chip color="success">1001</v-chip>
+            <v-chip color="success">{{ product.formtypeID }}</v-chip>
             <div class="px-2"></div>
-            <p>Enfamil Infant PWD</p>
+            <p>{{ product.formtypeName}}</p>
           </div>
           <div>
             <p>Ready to feed liquid</p>
@@ -60,3 +63,8 @@
     </v-expansion-panel>
   </v-expansion-panels>
 </template>
+<script setup lang="ts">
+import { useProductStore } from '@/stores/product';
+
+const productStore = useProductStore();
+</script>

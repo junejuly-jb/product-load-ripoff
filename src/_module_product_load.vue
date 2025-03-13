@@ -26,9 +26,6 @@ onMounted(() => {
         <v-text-field clearable label="Search" variant="underlined"></v-text-field>
       </div>
       <ExpandCard />
-      <ExpandCard />
-      <ExpandCard />
-      <ExpandCard />
     </div>
   </div>
 </template>

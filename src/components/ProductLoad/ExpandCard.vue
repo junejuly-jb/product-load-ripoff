@@ -6,19 +6,19 @@
     >
       <v-expansion-panel-title>
         <div class="w-100 d-flex justify-sm-space-between align-center">
-          <div class="d-flex align-center">
+          <div class="d-flex align-center w-100">
             <v-chip color="success">{{ product.formtypeID }}</v-chip>
             <div class="px-2"></div>
             <p>{{ product.formtypeName}}</p>
           </div>
-          <div>
+          <div class="w-100">
             <p>Ready to feed liquid</p>
           </div>
-          <div>
+          <div class="w-100">
             <p>Additive</p>
           </div>
-          <div>
-            <p>MJN</p>
+          <div class="w-100">
+            <p>Test Manufacturer</p>
           </div>
           <div></div>
         </div>

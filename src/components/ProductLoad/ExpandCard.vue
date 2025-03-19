@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panels>
     <v-expansion-panel 
-      v-for="product in productStore.products"
+      v-for="product in productStore.filteredProducts"
       :key="product.formtypeID"
     >
       <v-expansion-panel-title>

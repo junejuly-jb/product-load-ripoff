@@ -9,7 +9,11 @@ export const useProductStore = defineStore('product', () => {
   const products = ref<Array<NutritionProductTypes>>([])
   const manufacturers = ref<Array<Manufacturer>>([]);
   const formfactorTypes = ref<Array<FormFactorTypes>>([]);
+  const searchTerm = ref('');
+
+  //dialogs
   const productRelatedTableDialog = ref(false);
+  const fileUploadDialog = ref(false);
   
   const getProductsWithRelatedTables = () => {
     products.value = JSON.parse(JSON.stringify(JSONproducts))
@@ -17,5 +21,18 @@ export const useProductStore = defineStore('product', () => {
     formfactorTypes.value = JSON.parse(JSON.stringify(JSONFormfactorTypes))
   }
 
-  return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog }
+  const filteredProducts = computed(() => {
+    if (!searchTerm.value) {
+        return products.value; // Return all mappings if search is empty
+    }
+    return products.value.filter((product) =>
+        product.formtypeName
+            .toLowerCase()
+            .includes(searchTerm.value.toLowerCase())
+    );
+});
+
+  return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog, searchTerm, filteredProducts,
+    fileUploadDialog
+   }
 })

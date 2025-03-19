@@ -4,8 +4,9 @@ import ButtonArray from './components/ProductLoad/ButtonArray.vue';
 import { onMounted } from 'vue';
 import { useProductStore } from './stores/product';
 import ProductRelatedTableDialog from './components/ProductLoad/Dialogs/ProductRelatedTableDialog.vue';
+import FileUpload from './components/ProductLoad/Dialogs/FileUpload.vue';
 
-const productStore = useProductStore()
+const productStore = useProductStore();
 
 onMounted(() => {
   productStore.getProductsWithRelatedTables()
@@ -15,6 +16,7 @@ onMounted(() => {
 <template>
   <div>
     <ProductRelatedTableDialog />
+    <FileUpload/>
     <div class="pl__heading">
       <h2>Product Load</h2>
     </div>
@@ -23,7 +25,7 @@ onMounted(() => {
       <div class="my-7"></div>
       <h2>Product List</h2>
       <div class="w-25">
-        <v-text-field clearable label="Search" variant="underlined"></v-text-field>
+        <v-text-field v-model="productStore.searchTerm" label="Search" variant="underlined" clearable></v-text-field>
       </div>
       <ExpandCard />
     </div>

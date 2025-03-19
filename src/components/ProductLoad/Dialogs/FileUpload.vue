@@ -43,6 +43,23 @@ const readExcel = (file: File) => {
     if (!e.target?.result) return;
     const data = new Uint8Array(e.target.result as ArrayBuffer);
     const workbook = XLSX.read(data, { type: 'array' });
+
+    const sheet = workbook.Sheets['Sheet1'];
+    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
+
+    // Ensure jsonData is not empty
+    if (jsonData.length === 0) return;
+
+    // Extract headers (first row)
+    const headers = jsonData[0].map(header => (header ? header.toString() : ''));
+    
+    // Remove empty rows and map remaining data to objects using headers
+    const sheetData = jsonData.slice(1) // Skip headers
+      .filter(row => row.some(cell => cell !== null && cell !== '')) // Remove empty rows
+      .map(row => Object.fromEntries(headers.map((header, i) => [header, row[i] || '']))); // Map to objects
+
+    sheetData.forEach( data => console.log(data.DID))
+    console.log(sheetData); // Array of objects
   };
 
   reader.readAsArrayBuffer(file);

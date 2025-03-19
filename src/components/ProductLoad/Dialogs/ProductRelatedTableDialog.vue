@@ -8,7 +8,7 @@ const productStore = useProductStore();
 </script>
 <template>
     <v-dialog max-width="1000" v-model="productStore.productRelatedTableDialog" transition="dialog-bottom-transition">
-        <v-card title="">
+        <v-card>
         <v-card-title class="d-flex justify-space-between align-center">
             <span>Product Related Tables</span>
             <v-btn variant="text" icon @click="productStore.productRelatedTableDialog = false">

@@ -10,6 +10,8 @@ export const useProductStore = defineStore('product', () => {
   const manufacturers = ref<Array<Manufacturer>>([]);
   const formfactorTypes = ref<Array<FormFactorTypes>>([]);
   const searchTerm = ref('');
+  const errors = ref<Array<String>>([]);
+  const productTypes = ref<Array<String>>(['RTU','PWD','WATER','CONCENTRATE','STERILE WATER']);
 
   //dialogs
   const productRelatedTableDialog = ref(false);
@@ -33,6 +35,6 @@ export const useProductStore = defineStore('product', () => {
 });
 
   return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog, searchTerm, filteredProducts,
-    fileUploadDialog
+    fileUploadDialog, errors, productTypes
    }
 })

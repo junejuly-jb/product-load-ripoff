@@ -32,7 +32,7 @@ import { ref } from 'vue';
 import { useProductStore } from '../../../stores/product';
 import { mdiClose } from '@mdi/js';
 import * as XLSX from 'xlsx';
-import { type ProductsFromFile, transformProductData } from '../../../interfaces/Product';
+import { type Products, transformProductData } from '../../../interfaces/Product';
 
 const productStore = useProductStore();
 const errors = ref<string[]>([]);
@@ -81,13 +81,16 @@ const readExcel = (file: File) => {
 
     const transformedData = sheetData.map(item => transformProductData(item));
     transformedData.forEach((product, index) => { checkForErrors(product, index) })
+    if(productStore.errors.length == 0){
+        productStore.products = transformedData
+    }
   };
 
   reader.readAsArrayBuffer(file);
 };
 
 //check for error on file upload
-const checkForErrors = (product: ProductsFromFile, index: number) => {
+const checkForErrors = (product: Products, index: number) => {
     const mainProductDetails = isMainDetails(product);
     const row = index + 2;
 
@@ -97,26 +100,58 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
             productStore.errors.push(`No DID found at row ${row}`);
         }
     }
-    //Check Description
-    if(product.DID !== 0 && product.description == ''){
-        productStore.errors.push(`Description cannot be empty (row ${row})`);
-    }
 
-    //No value must be on product item number when looping to main details
-    if(isMainDetails(product) && product.productID){
-        productStore.errors.push(`Product ID must have no value at (row ${row})`);
-    }
+    //Check if main product details is accessed.
+    if(isMainDetails(product)){
+        //Check Description
+        if(product.description == ''){
+            productStore.errors.push(`Description cannot be empty (row ${row})`);
+        }
+        //No value must be on product item number when looping to main details
+        if(product.productID){
+            productStore.errors.push(`Product ID must have no value at (row ${row})`);
+        }
+        //Check if the types is WAI compatible
+        if(!productStore.productTypes.includes(product.productType)){
+            productStore.errors.push(`Invalid product type at (row ${row})`);
+        }
+        //Check if valid caloric densities
+        if(!isValidUnitString(product.caloricValue)){
+            productStore.errors.push(`Invalid unit type for caloric value at (row ${row})`);
+        }
+        //Check if displacement is 0
+        if(product.displacement == 0){
+            productStore.errors.push(`Product displacement cannot be 0 at (row ${row})`);
+        }
+        //Check if expiry is null or 0
+        if((product.expirationAfterOpeningHours == 0 || product.expiryOncePreparedHours == 0)){
+            productStore.errors.push(`Invalid expiration value at (row ${row})`);
+        }
+        //Check if Manufacturer exists
+        if(!checkIfManufacturerExists(product.category)){
+            productStore.errors.push(`No manufacturers found on the database at (row ${row})`);
+        }
+    } else { //Else product item is accessed
 
-    //Check if the types is WAI compatible
-    if(isMainDetails(product) && !productStore.productTypes.includes(product.productType)){
-        productStore.errors.push(`Invalid product type at (row ${row})`);
     }
 }
 
 //Check if the row is a main product details else product items
-const isMainDetails = (product: ProductsFromFile) => {
-    if(product.DID !== 0 && product.description !== '') return true;
+const isMainDetails = (product: Products) => {
+    if(product.DID !== 0 && product.productID == '') return true;
     return false;
+}
+
+//Unit string checking for caloric density
+function isValidUnitString(input: string) {
+    const units = ["kcal/g", "kcal/ml", "kcal/oz"];
+    const pattern = new RegExp(`^\\d+(\\.\\d+)?\\s*(${units.join("|").replace(/\//g, "\\/")})$`);
+
+    return pattern.test(input);
+}
+
+function checkIfManufacturerExists(input: string){
+    return productStore.manufacturers.some( item => item.ManufacturerName === input)
 }
 
 </script>

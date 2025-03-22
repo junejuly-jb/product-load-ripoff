@@ -1,8 +1,8 @@
 <template>
   <v-expansion-panels>
     <v-expansion-panel 
-      v-for="product in productStore.filteredProducts"
-      :key="product.DID"
+      v-for="(product, index) in productStore.filteredProducts"
+      :key="index"
     >
       <v-expansion-panel-title>
         <div class="w-100 d-flex justify-sm-space-between align-center">
@@ -35,7 +35,7 @@
             <p>Expiration when prepared: {{ product.expiryOncePreparedHours }}</p>
           </div>
           <div>
-            <p>Allow Frozen?: {{ product.allowProductToBeFrozen }}</p>
+            <p>Allow Frozen: {{ product.allowProductToBeFrozen }}</p>
           </div>
         </div>
         <v-expansion-panels>
@@ -53,8 +53,16 @@
             <v-expansion-panel-text>
               <div>
                 <div>{{item.container1Type}} {{item.container1Barcode}} {{ item.container1Volume !== '' ? `(${item.container1Volume})` : '' }} ({{item.container1Quantity}})</div>
-                <div v-if="item.container2Type !== ''" :class="item.container2Type !== '' ? 'ml-5' : ''">{{item.container2Type}} {{item.container2Barcode}} {{ item.container2Volume !== '' ? `(${item.container2Volume})` : '' }} {{item.container2Quantity !== '' ? `(${item.container2Quantity})` : ''}}</div>
-                <div v-if="item.container3Type !== ''" :class="item.container3Type !== '' ? 'ml-10' : 'ml-5'">{{item.container3Type}} {{item.container3Barcode}} ({{item.container3Volume}})</div>
+                <div 
+                  v-if="item.container2Type !== ''" :class="item.container2Type !== '' ? 'ml-5' : ''"
+                >
+                  {{item.container2Type}} {{item.container2Barcode}} {{ item.container2Volume !== '' ? `(${item.container2Volume})` : '' }} {{item.container2Quantity !== '' ? `(${item.container2Quantity})` : ''}}
+                </div>
+                <div 
+                  v-if="item.container3Type !== ''" :class="item.container3Type !== '' ? 'ml-10' : 'ml-5'"
+                >
+                  {{item.container3Type}} {{item.container3Barcode}} ({{item.container3Volume}})
+                </div>
               </div>
             </v-expansion-panel-text>
           </v-expansion-panel>

@@ -2,6 +2,7 @@
     <v-dialog
         v-model="productStore.fileUploadDialog"
         width="600"
+        persistent
         >
         <v-card>
             <v-card-title class="d-flex justify-space-between align-center">
@@ -20,10 +21,45 @@
                     variant="outlined" 
                     accept=".csv .xlsx"
                     @update:modelValue="handleClear"></v-file-input>
+                <div v-if="successFileUpload">
+                    <div>
+                        <v-chip color="success">{{ loadedProducts.length }}</v-chip> products loaded successfully.
+                    </div>
+                    <div class="my-1"></div>
+                    <div>
+                        <v-chip color="success">{{ countProductItems() }}</v-chip> items loaded successfully.
+                    </div>
+                    <div class="my-4"></div>
+                    <v-alert
+                    color="warning"
+                    v-if="successFileUpload && productStore.products.length > 0"
+                    type="warning"
+                    >It looks like you already have some products loaded. Do you want to add the new ones or replace them?
+                    </v-alert>
+                </div>
                 <div v-for="error in productStore.errors" class="py-1">
                     <v-alert density="compact" color="error">{{ error }}</v-alert>
                 </div>
             </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <div v-if="successFileUpload && productStore.products.length > 0">
+                    <v-btn
+                    text="Merge"
+                    @click="handleMerge"
+                    ></v-btn>
+                    <v-btn
+                    text="Overwrite"
+                    @click="handleSave"
+                    ></v-btn>
+                </div>
+                <div v-else>
+                    <v-btn
+                    text="Save"
+                    @click="handleSave"
+                    ></v-btn>
+                </div>
+            </v-card-actions>
       </v-card>
     </v-dialog>
 </template>
@@ -36,14 +72,23 @@ import { type ProductsFromFile, transformProductData, type Products, type Produc
 
 const productStore = useProductStore();
 const errors = ref<string[]>([]);
+const successFileUpload = ref(false)
+const loadedProducts = ref<Array<Products>>([])
 
 const handleClose = () => {
     productStore.fileUploadDialog = false
+    clearState()
+}
+
+const clearState = () => {
     productStore.errors = []
+    successFileUpload.value = false
+    loadedProducts.value = []
 }
 
 const handleClear = () => {
     productStore.errors = []
+    clearState()
 }
 
 const handleFileChange = (event: Event) => {
@@ -80,9 +125,13 @@ const readExcel = (file: File) => {
       .map(row => Object.fromEntries(headers.map((header, i) => [header, row[i] || '']))); // Map to objects
 
     const transformedData = sheetData.map(item => transformProductData(item));
-    transformedData.forEach((product, index) => { checkForErrors(product, index) })
+    
+    transformedData.forEach((product, index) => { checkForErrors(product, index) }) //Loop thru file and check for common errors
+    checkForDuplicatesOnFile(transformedData); //Check for duplicate barcodes (DID, Containers 1, 2, 3 and product ID)
+
     if(productStore.errors.length == 0){
         restructureData(transformedData)
+        successFileUpload.value = true
     }
   };
 
@@ -132,7 +181,7 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
             productStore.errors.push(`No manufacturers found on the database at (row ${row})`);
         }
     } else { //Else product item is accessed
-
+        //TODO
     }
 }
 
@@ -150,18 +199,20 @@ function isValidUnitString(input: string) {
     return pattern.test(input);
 }
 
+//Check DB for manufacturers
 function checkIfManufacturerExists(input: string){
     return productStore.manufacturers.some( item => item.ManufacturerName === input)
 }
 
+//Convert items and products to its classes!!
 function restructureData(data: Array<ProductsFromFile>){
     data.forEach((item) => {
         if(item.DID !== 0){
             const product: Products = convertToProductClass(item)
-            productStore.products.push(product)
+            loadedProducts.value.push(product)
         } else {
             const productItem: ProductItems = convertToProductItemClass(item)
-            productStore.products[productStore.products.length - 1].items.push(productItem)
+            loadedProducts.value[loadedProducts.value.length - 1].items.push(productItem)
         }
     })
 }
@@ -207,5 +258,48 @@ function convertToProductItemClass(data: ProductsFromFile): ProductItems {
         container3Type: data.container3Type,
         container3Volume: data.container3Volume,
     }
+}
+
+//Count product items loaded from file!
+function countProductItems() {
+    return loadedProducts.value.reduce((count, item) => count + item.items.length, 0);
+}
+
+const handleSave = () => {
+    productStore.setProducts(loadedProducts.value, 'overwrite')
+    productStore.fileUploadDialog = false
+    clearState();
+}
+
+const handleMerge = () => {
+    productStore.setProducts(loadedProducts.value, 'merge')
+    productStore.fileUploadDialog = false
+    clearState();
+}
+
+function checkForDuplicatesOnFile(data: Array<ProductsFromFile>) {
+    const seen = new Set<string>();
+    const duplicateEntries: Array<{ field: string; value: string }> = [];
+
+    const keysToCheck: Array<keyof ProductsFromFile> = [
+        "DID",
+        "productID",
+        "container1Barcode",
+        "container2Barcode",
+        "container3Barcode"
+    ];
+
+    data.forEach((item, index) => {
+        keysToCheck.forEach(key => {
+            const value = String(item[key]);
+            if (key === "DID" && item.DID === 0) return;
+            if (value && seen.has(value)) {
+                duplicateEntries.push({ field: key, value });
+                productStore.errors.push(`Duplicate value on row ${index + 2} (${value})`);
+            } else {
+                seen.add(value);
+            }
+        });
+    });
 }
 </script>

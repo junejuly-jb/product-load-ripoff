@@ -25,15 +25,31 @@ export const useProductStore = defineStore('product', () => {
     formfactorTypes.value = JSON.parse(JSON.stringify(JSONFormfactorTypes))
   }
 
-  const setProducts = (items: Array<Products>, type: string) => {
-    if(type == 'overwrite'){
-      products.value = items;
-    } else {
-      const duplicates = findNewDuplicates(items)
-      console.log(duplicates);
-      // products.value = [...products.value, ...items]
+    const setProducts = (items: Array<Products>, type: string) => {
+        if(type == 'overwrite'){
+            products.value = items;
+            return true;
+        } else {
+            const duplicates = findNewDuplicates(items)
+            if(duplicates.DID.length > 0 ){
+                errors.value.push(`Duplicate DID's: ${duplicates.DID}`)
+            }
+            if(duplicates.productID.length > 0){
+                errors.value.push(`Duplicate Product Item ID's: ${duplicates.productID}`)
+            }
+            if(duplicates.container1Barcode.length > 0){
+                errors.value.push(`Duplicate product form factor barcodes: ${duplicates.container1Barcode}`)
+            }
+            if(duplicates.container2Barcode.length > 0){
+                errors.value.push(`Duplicate product form factor barcodes: ${duplicates.container2Barcode}`)
+            }
+            if(duplicates.container3Barcode.length > 0){
+                errors.value.push(`Duplicate product form factor barcodes: ${duplicates.container3Barcode}`)
+            }
+            return errors.value.length > 0 ? false : true;
+        }
     }
-  }
+
   const filteredProducts = computed(() => {
     if (!searchTerm.value) {
         return products.value; // Return all mappings if search is empty
@@ -45,7 +61,7 @@ export const useProductStore = defineStore('product', () => {
     );
   });
 
-  const findNewDuplicates = (newProducts: Products[]): Record<string, Set<string>> => {
+  const findNewDuplicates = (newProducts: Products[]): Record<string, (string | number)[]> => {
       const existing = {
           DID: new Set<number>(),
           productID: new Set<string>(),
@@ -54,12 +70,12 @@ export const useProductStore = defineStore('product', () => {
           container3Barcode: new Set<string>()
       };
 
-      const duplicates: Record<string, Set<string>> = {
-          DID: new Set(),
-          productID: new Set(),
-          container1Barcode: new Set(),
-          container2Barcode: new Set(),
-          container3Barcode: new Set()
+      const duplicates: Record<string, Set<string | number>> = {
+          DID: new Set<number>(),
+          productID: new Set<string>(),
+          container1Barcode: new Set<string>(),
+          container2Barcode: new Set<string>(),
+          container3Barcode: new Set<string>()
       };
 
       // Populate existing values from oldProducts
@@ -73,10 +89,10 @@ export const useProductStore = defineStore('product', () => {
           }
       }
 
-      // Check for duplicates in newProducts
+      // Check for duplicates in new loaded products from file.
       for (const product of newProducts) {
           if (existing.DID.has(product.DID)) {
-              duplicates.DID.add(product.DID.toString());
+              duplicates.DID.add(product.DID);
           }
 
           for (const item of product.items) {
@@ -95,7 +111,15 @@ export const useProductStore = defineStore('product', () => {
           }
       }
 
-      return duplicates;
+    const jsonReadyDuplicates = {
+        DID: [...duplicates.DID],
+        productID: [...duplicates.productID],
+        container1Barcode: [...duplicates.container1Barcode],
+        container2Barcode: [...duplicates.container2Barcode],
+        container3Barcode: [...duplicates.container3Barcode]
+    };
+    
+    return jsonReadyDuplicates;
   }
 
 

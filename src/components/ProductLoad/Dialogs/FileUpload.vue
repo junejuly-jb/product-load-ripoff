@@ -53,7 +53,7 @@
                     @click="handleSave"
                     ></v-btn>
                 </div>
-                <div v-else>
+                <div v-if="successFileUpload && loadedProducts.length > 0 && productStore.products.length == 0">
                     <v-btn
                     text="Save"
                     @click="handleSave"
@@ -266,15 +266,21 @@ function countProductItems() {
 }
 
 const handleSave = () => {
-    productStore.setProducts(loadedProducts.value, 'overwrite')
-    productStore.fileUploadDialog = false
-    clearState();
+    const isSave = productStore.setProducts(loadedProducts.value, 'overwrite')
+    if(isSave){
+        productStore.fileUploadDialog = false
+        clearState();
+    }
 }
 
 const handleMerge = () => {
-    productStore.setProducts(loadedProducts.value, 'merge')
-    productStore.fileUploadDialog = false
-    clearState();
+    const isSave = productStore.setProducts(loadedProducts.value, 'merge')
+    if(!isSave){
+        successFileUpload.value = false
+    } else {
+        productStore.fileUploadDialog = false
+        clearState();
+    }
 }
 
 function checkForDuplicatesOnFile(data: Array<ProductsFromFile>) {

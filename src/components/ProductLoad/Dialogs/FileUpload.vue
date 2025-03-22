@@ -32,7 +32,7 @@ import { ref } from 'vue';
 import { useProductStore } from '../../../stores/product';
 import { mdiClose } from '@mdi/js';
 import * as XLSX from 'xlsx';
-import { type Products, transformProductData } from '../../../interfaces/Product';
+import { type ProductsFromFile, transformProductData, type Products, type ProductItems } from '../../../interfaces/Product';
 
 const productStore = useProductStore();
 const errors = ref<string[]>([]);
@@ -82,7 +82,7 @@ const readExcel = (file: File) => {
     const transformedData = sheetData.map(item => transformProductData(item));
     transformedData.forEach((product, index) => { checkForErrors(product, index) })
     if(productStore.errors.length == 0){
-        productStore.products = transformedData
+        restructureData(transformedData)
     }
   };
 
@@ -90,7 +90,7 @@ const readExcel = (file: File) => {
 };
 
 //check for error on file upload
-const checkForErrors = (product: Products, index: number) => {
+const checkForErrors = (product: ProductsFromFile, index: number) => {
     const mainProductDetails = isMainDetails(product);
     const row = index + 2;
 
@@ -137,7 +137,7 @@ const checkForErrors = (product: Products, index: number) => {
 }
 
 //Check if the row is a main product details else product items
-const isMainDetails = (product: Products) => {
+const isMainDetails = (product: ProductsFromFile) => {
     if(product.DID !== 0 && product.productID == '') return true;
     return false;
 }
@@ -154,4 +154,58 @@ function checkIfManufacturerExists(input: string){
     return productStore.manufacturers.some( item => item.ManufacturerName === input)
 }
 
+function restructureData(data: Array<ProductsFromFile>){
+    data.forEach((item) => {
+        if(item.DID !== 0){
+            const product: Products = convertToProductClass(item)
+            productStore.products.push(product)
+        } else {
+            const productItem: ProductItems = convertToProductItemClass(item)
+            productStore.products[productStore.products.length - 1].items.push(productItem)
+        }
+    })
+}
+
+function convertToProductClass(data: ProductsFromFile): Products{
+    return {
+        allowProductToBeFrozen: data.allowProductToBeFrozen,
+        base: data.base,
+        description: data.description,
+        baseFormulaHL7ReferenceCode: data.baseFormulaHL7ReferenceCode,
+        caloricValue: data.caloricValue,
+        category: data.category,
+        DID: data.DID,
+        directScanning: data.directScanning,
+        displacement: data.displacement,
+        expirationAfterOpeningHours: data.expirationAfterOpeningHours,
+        expiryOncePreparedHours: data.expiryOncePreparedHours,
+        fortifier: data.fortifier,
+        kitchenRecipe1: data.kitchenRecipe1,
+        kitchenRecipe2: data.kitchenRecipe2,
+        kitchenRecipe3: data.kitchenRecipe3,
+        modular: data.modular,
+        productType: data.productType,
+        shortName: data.shortName,
+        useProductAsDonorMilk: data.useProductAsDonorMilk,
+        items: []
+    }
+}
+
+function convertToProductItemClass(data: ProductsFromFile): ProductItems {
+    return {
+        productID: data.productID,
+        description: data.description,
+        container1Barcode: data.container1Barcode,
+        container1Quantity: data.container1Quantity,
+        container1Type: data.container1Type,
+        container1Volume: data.container1Volume,
+        container2Barcode: data.container2Barcode,
+        container2Quantity: data.container2Quantity,
+        container2Type: data.container2Type,
+        container2Volume: data.container2Volume,
+        container3Barcode: data.container3Barcode,
+        container3Type: data.container3Type,
+        container3Volume: data.container3Volume,
+    }
+}
 </script>

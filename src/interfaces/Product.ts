@@ -1,3 +1,42 @@
+export interface Products{
+    allowProductToBeFrozen: number | null;
+    base: string;
+    description: string;
+    baseFormulaHL7ReferenceCode: string;
+    caloricValue: string;
+    category: string;
+    DID: number;
+    directScanning: number;
+    displacement: number;
+    expirationAfterOpeningHours: number;
+    expiryOncePreparedHours: number;
+    fortifier: string;
+    kitchenRecipe1: string;
+    kitchenRecipe2: string;
+    kitchenRecipe3: string;
+    modular: string;
+    productType: string;
+    shortName: string;
+    useProductAsDonorMilk: boolean;
+    items: Array<ProductItems>
+}
+
+export interface ProductItems{
+    productID: string;
+    description: string;
+    container1Barcode: string;
+    container1Quantity: string;
+    container1Type: string;
+    container1Volume: string;
+    container2Barcode: string;
+    container2Quantity: string;
+    container2Type: string;
+    container2Volume: string;
+    container3Barcode: string;
+    container3Type: string;
+    container3Volume: string;
+}
+
 export interface Manufacturer {
     ManufacturerID: number;
     ManufacturerName: string;
@@ -19,8 +58,8 @@ export interface FormFactorTypes {
     updated_at: string;
 }
 
-export interface Products {
-    allowProductToBeFrozen: string;
+export interface ProductsFromFile {
+    allowProductToBeFrozen: number | null;
     base: string;
     description: string;
     baseFormulaHL7ReferenceCode: string;
@@ -50,12 +89,12 @@ export interface Products {
     productID: string;
     productType: string;
     shortName: string;
-    useProductAsDonorMilk: string;
+    useProductAsDonorMilk: boolean;
 }
 
-export function transformProductData(rawData: Record<string, any>): Products {
+export function transformProductData(rawData: Record<string, any>): ProductsFromFile {
     return {
-        allowProductToBeFrozen: rawData["Allow Product To Be Frozen"] || "",
+        allowProductToBeFrozen: rawData["Allow Product To Be Frozen"] || null,
         base: rawData["Base"] || "",
         description: rawData["Description"] || "",
         baseFormulaHL7ReferenceCode: rawData["Base Formula HL7 Reference Code"] || "",
@@ -85,6 +124,6 @@ export function transformProductData(rawData: Record<string, any>): Products {
         productID: rawData["Product ID"] || "",
         productType: rawData["Product Type"] || "",
         shortName: rawData["Short Name"] || "",
-        useProductAsDonorMilk: rawData["Use Product As Donor Milk"] || ""
+        useProductAsDonorMilk: rawData["Use Product As Donor Milk"] || 0
     };
 }

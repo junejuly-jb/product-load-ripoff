@@ -161,7 +161,7 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
             productStore.errors.push(`Product ID must have no value at (row ${row})`);
         }
         //Check if the types is WAI compatible
-        if(!productStore.productTypes.includes(product.productType)){
+        if(!productStore.productTypes.includes(product.productType.toUpperCase())){
             productStore.errors.push(`Invalid product type at (row ${row})`);
         }
         //Check if valid caloric densities
@@ -201,7 +201,7 @@ function isValidUnitString(input: string) {
 
 //Check DB for manufacturers
 function checkIfManufacturerExists(input: string){
-    return productStore.manufacturers.some( item => item.ManufacturerName === input)
+    return productStore.manufacturers.some( item => item.ManufacturerName.toUpperCase() == input.toUpperCase())
 }
 
 //Convert items and products to its classes!!

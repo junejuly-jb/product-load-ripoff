@@ -289,7 +289,6 @@ function checkForDuplicatesOnFile(data: Array<ProductsFromFile>) {
 
     const keysToCheck: Array<keyof ProductsFromFile> = [
         "DID",
-        "productID",
         "container1Barcode",
         "container2Barcode",
         "container3Barcode"
@@ -308,4 +307,5 @@ function checkForDuplicatesOnFile(data: Array<ProductsFromFile>) {
         });
     });
 }
+
 </script>

@@ -24,8 +24,17 @@ onMounted(() => {
       <ButtonArray/>
       <div class="my-7"></div>
       <h2>Product List</h2>
-      <div class="w-25">
-        <v-text-field v-model="productStore.searchTerm" label="Search" variant="underlined" clearable></v-text-field>
+      <div class="d-flex justify-space-between">
+        <div class="w-25">
+          <v-text-field v-model="productStore.searchTerm" label="Search" variant="underlined" clearable></v-text-field>
+        </div>
+        <div>
+          <v-pagination
+            v-model="productStore.currentPage"
+            :length="Math.ceil(productStore.products.length / productStore.itemsPerPage)"
+            total-visible="3"
+          ></v-pagination>
+        </div>
       </div>
       <ExpandCard />
     </div>

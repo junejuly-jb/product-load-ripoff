@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { type Manufacturer, type FormFactorTypes, type Products } from '../interfaces/Product'
 import JSONproducts from '../test-data/products.json'
@@ -14,6 +14,8 @@ export const useProductStore = defineStore('product', () => {
   const productTypes = ref<Array<String>>(['RTU','PWD','WATER','CONCENTRATE','STERILE WATER']);
   const supportedCaloricDensityUnits = ["kcal/g", "kcal/ml", "kcal/oz"];
   const calUnitCheckingRegEx = ref("/^\d+\s*(kcal\/g|kcal\/ml|kcal\/oz)$/");
+  const currentPage = ref(1);
+  const itemsPerPage = ref(15)
 
   //dialogs
   const productRelatedTableDialog = ref(false);
@@ -60,6 +62,14 @@ export const useProductStore = defineStore('product', () => {
             .includes(searchTerm.value.toLowerCase())
     );
   });
+
+  const filteredPaginatedItems = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    if(filteredProducts.value.length > 0){
+        return filteredProducts.value.slice(start, end);
+    }
+})
 
   const findNewDuplicates = (newProducts: Products[]): Record<string, (string | number)[]> => {
       const existing = {
@@ -121,9 +131,12 @@ export const useProductStore = defineStore('product', () => {
     
     return jsonReadyDuplicates;
   }
+    watch(searchTerm, (newVal, oldValu) => {
+        currentPage.value = 1
+    });
 
 
   return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog, searchTerm, filteredProducts,
-    fileUploadDialog, errors, productTypes, supportedCaloricDensityUnits, calUnitCheckingRegEx, setProducts
+    fileUploadDialog, errors, productTypes, supportedCaloricDensityUnits, calUnitCheckingRegEx, setProducts, currentPage, itemsPerPage, filteredPaginatedItems
    }
 })

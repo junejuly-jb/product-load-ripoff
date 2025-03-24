@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panels>
     <v-expansion-panel 
-      v-for="(product, index) in productStore.filteredProducts"
+      v-for="(product, index) in productStore.filteredPaginatedItems"
       :key="index"
     >
       <v-expansion-panel-title>

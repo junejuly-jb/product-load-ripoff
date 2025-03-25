@@ -130,7 +130,7 @@ export function transformProductData(rawData: Record<string, any>): ProductsFrom
 
 export function reverseTransformProductData(transformedData: ProductsFromFile): Record<string, any> {
     return {
-        "DID": transformedData.DID,
+        "DID": transformedData.DID == 0 ? null : transformedData.DID,
         "Base": transformedData.base,
         "Fortifier": transformedData.fortifier,
         "Modular": transformedData.modular,
@@ -139,9 +139,9 @@ export function reverseTransformProductData(transformedData: ProductsFromFile): 
         "Product ID": transformedData.productID,
         "Product Type": transformedData.productType,
         "Caloric Value": transformedData.caloricValue,
-        "Displacement": transformedData.displacement,
-        "Expiration After Opening ( hours)": transformedData.expirationAfterOpeningHours,
-        "Expiry Once Prepared (Only if Fortifier) ( hours )": transformedData.expiryOncePreparedHours,
+        "Displacement": transformedData.displacement == 0 ? null : transformedData.displacement,
+        "Expiration After Opening ( hours)": transformedData.expirationAfterOpeningHours == 0 ? null : transformedData.expirationAfterOpeningHours,
+        "Expiry Once Prepared (Only if Fortifier) ( hours )": transformedData.expiryOncePreparedHours == 0 ? null : transformedData.expiryOncePreparedHours,
         "Base Formula HL7 Reference Code": transformedData.baseFormulaHL7ReferenceCode,
         "Container 1 Type": transformedData.container1Type,
         "Container 1 Barcode": transformedData.container1Barcode,
@@ -155,11 +155,11 @@ export function reverseTransformProductData(transformedData: ProductsFromFile): 
         "Container 3 Barcode": transformedData.container3Barcode,
         "Container 3 Volume": transformedData.container3Volume,
         "Category": transformedData.category,
-        "Direct Scanning": transformedData.directScanning,
+        "Direct Scanning": transformedData.directScanning == 0 ? null : transformedData.directScanning,
         "Kitchen Recipe #1 (Required Unit Volume / Target Caloric Density)": transformedData.kitchenRecipe1,
         "Kitchen Recipe #2 (Required Unit Volume / Target Caloric Density)": transformedData.kitchenRecipe2,
         "Kitchen Recipe #3 (Required Unit Volume / Target Caloric Density)": transformedData.kitchenRecipe3,
-        "Use Product As Donor Milk": transformedData.useProductAsDonorMilk,
+        "Use Product As Donor Milk": transformedData.useProductAsDonorMilk == 0 ? null : transformedData.useProductAsDonorMilk,
         "Allow Product To Be Frozen": transformedData.allowProductToBeFrozen
     };
 }

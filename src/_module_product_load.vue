@@ -5,6 +5,8 @@ import { onMounted } from 'vue';
 import { useProductStore } from './stores/product';
 import ProductRelatedTableDialog from './components/ProductLoad/Dialogs/ProductRelatedTableDialog.vue';
 import FileUpload from './components/ProductLoad/Dialogs/FileUpload.vue';
+import Notification from './components/ProductLoad/Notification.vue';
+
 
 const productStore = useProductStore();
 
@@ -17,6 +19,7 @@ onMounted(() => {
   <div class="mb-10">
     <ProductRelatedTableDialog />
     <FileUpload/>
+    <Notification/>
     <div class="pl__heading">
       <h2>Product Load</h2>
     </div>

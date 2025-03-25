@@ -1,7 +1,7 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { type Manufacturer, type FormFactorTypes, type Products, type ProductsFromFile } from '../interfaces/Product'
-import JSONproducts from '../test-data/products.json'
+import { type Notification } from '../interfaces/Notification'
 import JSONmanufacturers from '../test-data/manufacturers.json'
 import JSONFormfactorTypes from '../test-data/categories.json'
 
@@ -16,6 +16,7 @@ export const useProductStore = defineStore('product', () => {
   const calUnitCheckingRegEx = ref("/^\d+\s*(kcal\/g|kcal\/ml|kcal\/oz)$/");
   const currentPage = ref(1);
   const itemsPerPage = ref(15)
+  const notifs = ref<Array<Notification>>([])
 
   //dialogs
   const productRelatedTableDialog = ref(false);
@@ -215,9 +216,23 @@ export const useProductStore = defineStore('product', () => {
         return products;
     }
 
+    const addNotifs = (data: Notification) => {
+        notifs.value.push(data)
+    }
+
+    const removeNotifs = (id: number) => {
+        const index = notifs.value.findIndex((item) => item.id === id);
+        notifs.value.splice(index, 1);
+    }
+
+    const autoRemoveNotifs = (id: number) => {
+        setTimeout(() => {
+            removeNotifs(id)
+        }, 3000)
+    }
 
   return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog, searchTerm, filteredProducts,
     fileUploadDialog, errors, productTypes, supportedCaloricDensityUnits, calUnitCheckingRegEx, setProducts, currentPage, itemsPerPage, filteredPaginatedItems,
-    convertToProductsFromFile
+    convertToProductsFromFile, addNotifs, autoRemoveNotifs, notifs
    }
 })

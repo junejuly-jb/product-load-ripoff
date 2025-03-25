@@ -126,7 +126,8 @@ const readExcel = (file: File) => {
 
     const transformedData = sheetData.map(item => transformProductData(item));
     
-    transformedData.forEach((product, index) => { checkForErrors(product, index) }) //Loop thru file and check for common errors
+    transformedData.forEach((product, index) => { checkForErrors(product, index) }) //Loop thru file and check for common errors (Duplicate DID's, etc...)
+    
     checkForDuplicatesOnFile(transformedData); //Check for duplicate barcodes (DID, Containers 1, 2, 3 and product ID)
 
     if(productStore.errors.length == 0){

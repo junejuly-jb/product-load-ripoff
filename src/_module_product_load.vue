@@ -14,7 +14,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="mb-10">
     <ProductRelatedTableDialog />
     <FileUpload/>
     <div class="pl__heading">

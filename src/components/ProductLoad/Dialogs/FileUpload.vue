@@ -119,16 +119,18 @@ const readExcel = (file: File) => {
     // Extract headers (first row)
     const headers = jsonData[0].map(header => (header ? header.toString() : ''));
     
+    
     // Remove empty rows and map remaining data to objects using headers
     const sheetData = jsonData.slice(1) // Skip headers
-      .filter(row => row.some(cell => cell !== null && cell !== '')) // Remove empty rows
-      .map(row => Object.fromEntries(headers.map((header, i) => [header, row[i] || '']))); // Map to objects
+      .filter(row => row.some(cell => cell !== null && cell !== ''))
+      .map(row => Object.fromEntries(headers.map((header, i) => [header, row[i] || ''])));
 
     const transformedData = sheetData.map(item => transformProductData(item));
     
     transformedData.forEach((product, index) => { checkForErrors(product, index) }) //Loop thru file and check for common errors (Duplicate DID's, etc...)
     
-    checkForDuplicatesOnFile(transformedData); //Check for duplicate barcodes (DID, Containers 1, 2, 3 and product ID)
+    checkForDuplicatesOnFile(transformedData); //Check for duplicate barcodes (DID and Containers 1, 2, 3)
+    findDuplicateProductIDs(transformedData); //Check for duplicated Product ID on its column
 
     if(productStore.errors.length == 0){
         restructureData(transformedData)
@@ -141,7 +143,6 @@ const readExcel = (file: File) => {
 
 //check for error on file upload
 const checkForErrors = (product: ProductsFromFile, index: number) => {
-    const mainProductDetails = isMainDetails(product);
     const row = index + 2;
 
     //Check if DID is not empty
@@ -153,6 +154,7 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
 
     //Check if main product details is accessed.
     if(isMainDetails(product)){
+        
         //Check Description
         if(product.description == ''){
             productStore.errors.push(`Description cannot be empty (row ${row})`);
@@ -182,13 +184,24 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
             productStore.errors.push(`No manufacturers found on the database at (row ${row})`);
         }
     } else { //Else product item is accessed
-        //TODO
+        //Check Product name is not null
+        if(!product.description) { productStore.errors.push(`No product description at (row ${row})`) }
+        
+        //Check Product Item ID is not null
+        if(!product.productID) { productStore.errors.push(`No product description at (row ${row})`) }
+        
+        //Check if case and quantity has value
+        // if(!validateCaseAndBarcode(product)) { productStore.errors.push(`Verify container type and container quantity at (row ${row})`) }
+        const test = validateContainerWithQuantity(product)
+        console.log(test);
+        
+        //Check if the last barcode is type 2
     }
 }
 
 //Check if the row is a main product details else product items
 const isMainDetails = (product: ProductsFromFile) => {
-    if(product.DID !== 0 && product.productID == '') return true;
+    if(product.DID !== 0 && product.productType) return true;
     return false;
 }
 
@@ -307,6 +320,72 @@ function checkForDuplicatesOnFile(data: Array<ProductsFromFile>) {
             }
         });
     });
+}
+
+function findDuplicateProductIDs(arr: Array<ProductsFromFile>) {
+    let count: Record<string, number> = {};
+    let duplicates = new Set<string>();
+
+    arr.forEach((obj, index) => {
+        const productID = obj.productID?.trim();
+
+        if (!productID) return;
+
+        count[productID] = (count[productID] || 0) + 1;
+        if (count[productID] > 1) {
+            productStore.errors.push(`Duplicate product ID value on row ${index + 2} (${productID})`);
+        }
+    });
+
+    return [...duplicates];
+}
+
+// function validateCaseAndBarcode(obj: ProductsFromFile): boolean {
+//     for (let i = 1; i <= 2; i++) {
+//         const caseKey = `container${i}Type`;
+//         const barcodeKey = `container${i}Quantity`;
+
+//         const objAsRecord = obj as unknown as Record<string, string | undefined>;
+
+//         const caseValue = objAsRecord[caseKey]?.trim();
+//         const barcodeValue = objAsRecord[barcodeKey]?.trim();
+
+//         if (!caseValue && !barcodeValue) continue;
+
+//         if ((caseValue && !barcodeValue) || (!caseValue && barcodeValue)) {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
+
+function validateContainerWithQuantity(obj: ProductsFromFile) : Array<string>{
+
+    let messages: Array<string> = []
+    // Required container type keys
+    const containerTypeKeys = ['container1Type', 'container2Type', 'container3Type'];
+    const containerQuantityKeys = ['container1Quantity', 'container2Quantity'];
+    
+    // Check if all container types have values
+    const objAsRecord = obj as unknown as Record<string, string | undefined>;
+    for (let key of containerTypeKeys) {
+        if (!objAsRecord[key] || objAsRecord[key].trim() === '') {
+            messages.push(`${key} is missing or empty.`)
+        }
+    }
+    
+    // Check if all container quantities have values (except for the exemption rule)
+    for (let key of containerQuantityKeys) {
+        if (key === 'container2Quantity' && obj['container3Type'] && obj['container3Type'].trim() === '') {
+            continue; // Exemption rule: container2Quantity can be empty if container3Type is empty
+        }
+        
+        if (!objAsRecord[key] || objAsRecord[key].trim() === '') {
+            messages.push(`${key} is missing or empty.`)
+        }
+    }
+    
+    return messages;
 }
 
 </script>

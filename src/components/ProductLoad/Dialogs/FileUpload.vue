@@ -118,6 +118,7 @@ const readExcel = (file: File) => {
 
     // Extract headers (first row)
     const headers = jsonData[0].map(header => (header ? header.toString() : ''));
+    console.log(jsonData);
     
     
     // Remove empty rows and map remaining data to objects using headers
@@ -190,10 +191,19 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
         //Check Product Item ID is not null
         if(!product.productID) { productStore.errors.push(`No product description at (row ${row})`) }
         
+        //Check if valid form factor type base on DB
+        if(product.container1Type && !isValidFormFactorType(product.container1Type)){
+            productStore.errors.push(`Form factor type (Container 1) not found at (row ${row})`)
+        }
+        if(product.container2Type && !isValidFormFactorType(product.container2Type)){
+            productStore.errors.push(`Form factor type (Container 1) not found at (row ${row})`)
+        }
+        if(product.container3Type && !isValidFormFactorType(product.container3Type)){
+            productStore.errors.push(`Form factor type (Container 1) not found at (row ${row})`)
+        }
+
         //Check if case and quantity has value
         // if(!validateCaseAndBarcode(product)) { productStore.errors.push(`Verify container type and container quantity at (row ${row})`) }
-        const test = validateContainerWithQuantity(product)
-        console.log(test);
         
         //Check if the last barcode is type 2
     }
@@ -340,52 +350,42 @@ function findDuplicateProductIDs(arr: Array<ProductsFromFile>) {
     return [...duplicates];
 }
 
-// function validateCaseAndBarcode(obj: ProductsFromFile): boolean {
-//     for (let i = 1; i <= 2; i++) {
-//         const caseKey = `container${i}Type`;
-//         const barcodeKey = `container${i}Quantity`;
+function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
+    let errors = [];
 
-//         const objAsRecord = obj as unknown as Record<string, string | undefined>;
-
-//         const caseValue = objAsRecord[caseKey]?.trim();
-//         const barcodeValue = objAsRecord[barcodeKey]?.trim();
-
-//         if (!caseValue && !barcodeValue) continue;
-
-//         if ((caseValue && !barcodeValue) || (!caseValue && barcodeValue)) {
-//             return false;
-//         }
-//     }
-//     return true;
-// }
-
-function validateContainerWithQuantity(obj: ProductsFromFile) : Array<string>{
-
-    let messages: Array<string> = []
-    // Required container type keys
-    const containerTypeKeys = ['container1Type', 'container2Type', 'container3Type'];
-    const containerQuantityKeys = ['container1Quantity', 'container2Quantity'];
-    
-    // Check if all container types have values
-    const objAsRecord = obj as unknown as Record<string, string | undefined>;
-    for (let key of containerTypeKeys) {
-        if (!objAsRecord[key] || objAsRecord[key].trim() === '') {
-            messages.push(`${key} is missing or empty.`)
-        }
+    //check if empty vice versa
+    if(obj.container1Type == ''){
+        if(obj.container2Type){ errors.push(`Container 1 must have value, child detected on row ${row}`) }
+        if(obj.container3Type){ errors.push(`Container 1 must have value, child detected on row ${row}`) }
+        if(obj.container1Quantity || obj.container1Barcode) {errors.push(`Container 1 type cannot be null ${row}`)}
     }
-    
-    // Check if all container quantities have values (except for the exemption rule)
-    for (let key of containerQuantityKeys) {
-        if (key === 'container2Quantity' && obj['container3Type'] && obj['container3Type'].trim() === '') {
-            continue; // Exemption rule: container2Quantity can be empty if container3Type is empty
-        }
-        
-        if (!objAsRecord[key] || objAsRecord[key].trim() === '') {
-            messages.push(`${key} is missing or empty.`)
-        }
+    if (obj.container2Type == '') {
+        if(obj.container1Type){ errors.push(`Container 2 must have value, child detected on row ${row}`) }
+        if(obj.container3Type){ errors.push(`Container 2 must have value, child detected on row ${row}`) }
+        if(obj.container2Quantity || obj.container2Barcode) {errors.push(`Container 2 type cannot be null ${row}`)}
     }
-    
-    return messages;
+
+    //check if divisible container 1 and 2
+    if(obj.container3Type){
+        if(obj.container1Quantity || obj.container2Quantity){
+            if(!isWholeNumber(obj.container1Quantity,obj.container2Quantity)){
+                errors.push(`Quantity 1 is not divisible by Quantity 2 on row ${row}`)
+            }
+        }
+        else{ errors.push(`Container quantity must have a value, on row ${row}`) }
+    }
+
+    //TODO: check if container has quantity
+
+    return errors;
+}
+
+function isWholeNumber(dividend: string, divisor: string) {
+  return Number(dividend) % Number(divisor) === 0;
+}
+
+function isValidFormFactorType(value: string): boolean{
+    return productStore.formfactorTypes.some(obj => obj.name === value);
 }
 
 </script>

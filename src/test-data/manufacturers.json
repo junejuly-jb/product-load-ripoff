@@ -168,5 +168,85 @@
         "updatedBy": null,
         "created_at": null,
         "updated_at": null
+    },
+    {
+        "ManufacturerID": 25,
+        "ManufacturerName": "SimplyThick",
+        "ManufacturerDescription": "SimplyThick",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "ManufacturerID": 26,
+        "ManufacturerName": "Cambrooke Therapeutics",
+        "ManufacturerDescription": "Cambrooke Therapeutics",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "ManufacturerID": 27,
+        "ManufacturerName": "Prolacta Bioscience",
+        "ManufacturerDescription": "Prolacta Bioscience",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "ManufacturerID": 28,
+        "ManufacturerName": "Kate Farms",
+        "ManufacturerDescription": "Kate Farms",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "ManufacturerID": 29,
+        "ManufacturerName": "Gelmix",
+        "ManufacturerDescription": "Gelmix",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "ManufacturerID": 30,
+        "ManufacturerName": "Nutricost",
+        "ManufacturerDescription": "Nutricost",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "ManufacturerID": 31,
+        "ManufacturerName": "Vitaflo",
+        "ManufacturerDescription": "Vitaflo",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
+    },
+    {
+        "ManufacturerID": 32,
+        "ManufacturerName": "Medtrition",
+        "ManufacturerDescription": "Medtrition",
+        "ManufacturerStatus": 1,
+        "createdBy": null,
+        "updatedBy": null,
+        "created_at": null,
+        "updated_at": null
     }
 ]

@@ -110,33 +110,36 @@ const readExcel = (file: File) => {
     const data = new Uint8Array(e.target.result as ArrayBuffer);
     const workbook = XLSX.read(data, { type: 'array' });
 
-    const sheet = workbook.Sheets['Sheet1'];
-    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
-
-    // Ensure jsonData is not empty
-    if (jsonData.length === 0) return;
-
-    // Extract headers (first row)
-    const headers = jsonData[0].map(header => (header ? header.toString() : ''));
-    console.log(jsonData);
+    const sheetName = Object.keys(workbook.Sheets).find(name => name.includes("PRODUCT MASTER"));
     
-    
-    // Remove empty rows and map remaining data to objects using headers
-    const sheetData = jsonData.slice(1) // Skip headers
-      .filter(row => row.some(cell => cell !== null && cell !== ''))
-      .map(row => Object.fromEntries(headers.map((header, i) => [header, row[i] || ''])));
+    if (!sheetName) {
+        productStore.errors.push("Sheet containing 'PRODUCT MASTER' not found.");
+    } else {
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
 
-    const transformedData = sheetData.map(item => transformProductData(item));
-    
-    transformedData.forEach((product, index) => { checkForErrors(product, index) }) //Loop thru file and check for common errors (Duplicate DID's, etc...)
-    
-    checkForDuplicatesOnFile(transformedData); //Check for duplicate barcodes (DID and Containers 1, 2, 3)
-    findDuplicateProductIDs(transformedData); //Check for duplicated Product ID on its column
+        if (jsonData.length === 0) return;
 
-    if(productStore.errors.length == 0){
-        restructureData(transformedData)
-        successFileUpload.value = true
+        const headers = jsonData[0].map(header => (header ? header.toString() : ''));
+        
+        const sheetData = jsonData.slice(1) // Skip headers
+        .filter(row => row.some(cell => cell !== null && cell !== ''))
+        .map(row => Object.fromEntries(headers.map((header, i) => [header, row[i] || ''])));
+
+        const transformedData = sheetData.map(item => transformProductData(item));
+        
+        transformedData.forEach((product, index) => { checkForErrors(product, index) }) //Loop thru file and check for common errors (Duplicate DID's, etc...)
+        
+        checkForDuplicatesOnFile(transformedData); //Check for duplicate barcodes (DID and Containers 1, 2, 3)
+        findDuplicateProductIDs(transformedData); //Check for duplicated Product ID on its column
+
+        if(productStore.errors.length == 0){
+            restructureData(transformedData)
+            successFileUpload.value = true
+        }
     }
+
+    
   };
 
   reader.readAsArrayBuffer(file);
@@ -202,6 +205,10 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
             productStore.errors.push(`Form factor type (Container 1) not found at (row ${row})`)
         }
 
+        const formfactorErrors = validateFormFactors(product, row)
+        if(formfactorErrors.length > 0){
+            formfactorErrors.forEach(item => productStore.errors.push(item))
+        }
         //Check if case and quantity has value
         // if(!validateCaseAndBarcode(product)) { productStore.errors.push(`Verify container type and container quantity at (row ${row})`) }
         
@@ -333,14 +340,17 @@ function checkForDuplicatesOnFile(data: Array<ProductsFromFile>) {
 }
 
 function findDuplicateProductIDs(arr: Array<ProductsFromFile>) {
+    console.log(arr);
+    
     let count: Record<string, number> = {};
     let duplicates = new Set<string>();
 
     arr.forEach((obj, index) => {
-        const productID = obj.productID?.trim();
+        console.log(obj.productID);
+        if (!obj.productID) return;
 
-        if (!productID) return;
-
+        const productID = String(obj.productID)?.trim();
+        
         count[productID] = (count[productID] || 0) + 1;
         if (count[productID] > 1) {
             productStore.errors.push(`Duplicate product ID value on row ${index + 2} (${productID})`);
@@ -351,6 +361,8 @@ function findDuplicateProductIDs(arr: Array<ProductsFromFile>) {
 }
 
 function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
+    const supportedUnits = ["ml", "l", "oz", "fl oz", "qt", "g", "lb"];
+    let hasValidVolumeAlready = false;
     let errors = [];
 
     //check if empty vice versa
@@ -376,6 +388,37 @@ function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
     }
 
     //TODO: check if container has quantity
+    if (obj.container3Type) {
+        if (
+            !obj.container1Type ||
+            obj.container1Quantity == null ||
+            !obj.container2Type ||
+            obj.container2Quantity == null
+        ) {
+            errors.push(`Check form factor type and quantities, on row ${row}`);
+        }
+    }
+
+    //TODO: Check if proper volume is applied.
+    for (let i = 3; i >= 1; i--) {
+        const typeKey = `container${i}Type`;
+        const volumeKey = `container${i}Volume`;
+
+        const typeValue = obj[typeKey as keyof ProductsFromFile];
+        const volumeValue = String(obj[volumeKey as keyof ProductsFromFile])?.trim();
+
+        if (volumeValue && !typeValue) {
+            errors.push(`${volumeKey} is defined ("${volumeValue}") but ${typeKey} is missing, on row ${row}`);
+        }
+
+        if (typeValue) {
+            if (volumeValue) {
+                hasValidVolumeAlready = true;
+            } else if (!hasValidVolumeAlready) {
+                errors.push(`${typeKey} is defined ("${typeValue}") but ${volumeKey} is missing and no later container has volume, on row ${row}`);
+            }
+        }
+    } 
 
     return errors;
 }

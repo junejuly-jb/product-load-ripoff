@@ -1,9 +1,18 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { type Manufacturer, type FormFactorTypes, type Products, type ProductsFromFile } from '../interfaces/Product'
+import { 
+    type Manufacturer, 
+    type FormFactorTypes, 
+    type Products,
+    type ProductItems,
+    type ProductsFromFile,
+    convertToProductClass,
+    convertToProductItemClass,
+    convertManufacturers,
+    convertFormfactorTypes
+} from '../interfaces/Product'
 import { type Notification } from '../interfaces/Notification'
-import JSONmanufacturers from '../test-data/manufacturers.json'
-import JSONFormfactorTypes from '../test-data/categories.json'
+import ProductLoadServices from '../services/ProductLoadServices'
 
 export const useProductStore = defineStore('product', () => {
   const products = ref<Array<Products>>([])
@@ -17,15 +26,40 @@ export const useProductStore = defineStore('product', () => {
   const currentPage = ref(1);
   const itemsPerPage = ref(15)
   const notifs = ref<Array<Notification>>([])
+  const isFetching = ref(true)
 
   //dialogs
   const productRelatedTableDialog = ref(false);
   const fileUploadDialog = ref(false);
   
-  const getProductsWithRelatedTables = () => {
+  const getProductsWithRelatedTables = async () => {
+    const id = Date.now()
+    try {
+        const dataProducts = await ProductLoadServices.getProducts();
+        const dataManufacturers = await ProductLoadServices.getManufacturers();
+        const dataFormfactorTypes = await ProductLoadServices.getFormfactorTypes();
+        if(dataProducts.data.success && dataManufacturers.data.success && dataFormfactorTypes.data.success){
+            const productsFromDB: Array<ProductsFromFile> = dataProducts.data.data
+            products.value = restructureData(productsFromDB)
+            manufacturers.value = convertManufacturers(dataManufacturers.data.data)
+            formfactorTypes.value = convertFormfactorTypes(dataFormfactorTypes.data.data)
+            const notif: Notification = {id, message: 'Products and related tables loaded successfully.', type: 'success'} 
+            addNotifs(notif)
+            autoRemoveNotifs(id)
+            isFetching.value = false
+        }
+        else{
+            const notif: Notification = {id, message: 'Unable to retrieve product list.', type: 'error'} 
+            addNotifs(notif)
+        }
+    } catch (error) {
+        const notif: Notification = {id, message: 'Unable to retrieve product list.', type: 'error'} 
+        addNotifs(notif)
+    }
+
     // products.value = JSON.parse(JSON.stringify(JSONproducts))
-    manufacturers.value = JSON.parse(JSON.stringify(JSONmanufacturers))
-    formfactorTypes.value = JSON.parse(JSON.stringify(JSONFormfactorTypes))
+    // manufacturers.value = JSON.parse(JSON.stringify(JSONmanufacturers))
+    // formfactorTypes.value = JSON.parse(JSON.stringify(JSONFormfactorTypes))
   }
 
     const setProducts = (items: Array<Products>, type: string) => {
@@ -231,8 +265,23 @@ export const useProductStore = defineStore('product', () => {
         }, 3000)
     }
 
+    //Convert items and products to its classes!!
+    function restructureData(data: Array<ProductsFromFile>): Array<Products>{
+        let loadedProducts: Array<Products> = []
+        data.forEach((item) => {
+            if(item.DID !== 0){
+                const product: Products = convertToProductClass(item)
+                loadedProducts.push(product)
+            } else {
+                const productItem: ProductItems = convertToProductItemClass(item)
+                loadedProducts[loadedProducts.length - 1].items.push(productItem)
+            }
+        })
+        return loadedProducts;
+    }
+
   return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog, searchTerm, filteredProducts,
     fileUploadDialog, errors, productTypes, supportedCaloricDensityUnits, calUnitCheckingRegEx, setProducts, currentPage, itemsPerPage, filteredPaginatedItems,
-    convertToProductsFromFile, addNotifs, autoRemoveNotifs, notifs
+    convertToProductsFromFile, addNotifs, autoRemoveNotifs, notifs, restructureData, isFetching
    }
 })

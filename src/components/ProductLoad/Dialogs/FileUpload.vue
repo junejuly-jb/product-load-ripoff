@@ -68,7 +68,7 @@ import { ref } from 'vue';
 import { useProductStore } from '../../../stores/product';
 import { mdiClose } from '@mdi/js';
 import * as XLSX from 'xlsx';
-import { type ProductsFromFile, transformProductData, type Products, type ProductItems } from '../../../interfaces/Product';
+import { type ProductsFromFile, transformProductData, type Products } from '../../../interfaces/Product';
 
 const productStore = useProductStore();
 const errors = ref<string[]>([]);
@@ -122,7 +122,7 @@ const readExcel = (file: File) => {
 
         const headers = jsonData[0].map(header => (header ? header.toString() : ''));
         
-        const sheetData = jsonData.slice(1) // Skip headers
+        const sheetData = jsonData.slice(1)
         .filter(row => row.some(cell => cell !== null && cell !== ''))
         .map(row => Object.fromEntries(headers.map((header, i) => [header, row[i] || ''])));
 
@@ -134,12 +134,12 @@ const readExcel = (file: File) => {
         findDuplicateProductIDs(transformedData); //Check for duplicated Product ID on its column
 
         if(productStore.errors.length == 0){
-            restructureData(transformedData)
+            const restructedData = productStore.restructureData(transformedData)
+            loadedProducts.value = restructedData
             successFileUpload.value = true
         }
     }
 
-    
   };
 
   reader.readAsArrayBuffer(file);
@@ -235,61 +235,6 @@ function checkIfManufacturerExists(input: string){
     return productStore.manufacturers.some( item => item.ManufacturerName.toUpperCase() == input.toUpperCase())
 }
 
-//Convert items and products to its classes!!
-function restructureData(data: Array<ProductsFromFile>){
-    data.forEach((item) => {
-        if(item.DID !== 0){
-            const product: Products = convertToProductClass(item)
-            loadedProducts.value.push(product)
-        } else {
-            const productItem: ProductItems = convertToProductItemClass(item)
-            loadedProducts.value[loadedProducts.value.length - 1].items.push(productItem)
-        }
-    })
-}
-
-function convertToProductClass(data: ProductsFromFile): Products{
-    return {
-        allowProductToBeFrozen: data.allowProductToBeFrozen,
-        base: data.base,
-        description: data.description,
-        baseFormulaHL7ReferenceCode: data.baseFormulaHL7ReferenceCode,
-        caloricValue: data.caloricValue,
-        category: data.category,
-        DID: data.DID,
-        directScanning: data.directScanning,
-        displacement: data.displacement,
-        expirationAfterOpeningHours: data.expirationAfterOpeningHours,
-        expiryOncePreparedHours: data.expiryOncePreparedHours,
-        fortifier: data.fortifier,
-        kitchenRecipe1: data.kitchenRecipe1,
-        kitchenRecipe2: data.kitchenRecipe2,
-        kitchenRecipe3: data.kitchenRecipe3,
-        modular: data.modular,
-        productType: data.productType,
-        shortName: data.shortName,
-        useProductAsDonorMilk: data.useProductAsDonorMilk,
-        items: []
-    }
-}
-
-function convertToProductItemClass(data: ProductsFromFile): ProductItems {
-    return {
-        productID: data.productID,
-        description: data.description,
-        container1Barcode: data.container1Barcode,
-        container1Quantity: data.container1Quantity,
-        container1Type: data.container1Type,
-        container1Volume: data.container1Volume,
-        container2Barcode: data.container2Barcode,
-        container2Quantity: data.container2Quantity,
-        container2Type: data.container2Type,
-        container2Volume: data.container2Volume,
-        container3Barcode: data.container3Barcode,
-        container3Type: data.container3Type,
-        container3Volume: data.container3Volume,
-    }
-}
 
 //Count product items loaded from file!
 function countProductItems() {
@@ -363,7 +308,7 @@ function findDuplicateProductIDs(arr: Array<ProductsFromFile>) {
 function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
     const supportedUnits = ["ml", "l", "oz", "fl oz", "qt", "g", "lb"];
     let hasValidVolumeAlready = false;
-    let errors = [];
+    let errors: Array<string> = [];
 
     //check if empty vice versa
     if(obj.container1Type == ''){

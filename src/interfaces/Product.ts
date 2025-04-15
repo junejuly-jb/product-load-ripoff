@@ -1,3 +1,8 @@
+export interface ProductName{
+    formtypeID: Number,
+    formtypeHL7Reference: String
+}
+
 export interface Products{
     DID: number;
     base: string;
@@ -163,3 +168,72 @@ export function reverseTransformProductData(transformedData: ProductsFromFile): 
         "Allow Product To Be Frozen": transformedData.allowProductToBeFrozen
     };
 }
+
+
+export function convertToProductClass(data: ProductsFromFile): Products{
+    return {
+        allowProductToBeFrozen: data.allowProductToBeFrozen,
+        base: data.base,
+        description: data.description,
+        baseFormulaHL7ReferenceCode: data.baseFormulaHL7ReferenceCode,
+        caloricValue: data.caloricValue,
+        category: data.category,
+        DID: data.DID,
+        directScanning: data.directScanning,
+        displacement: data.displacement,
+        expirationAfterOpeningHours: data.expirationAfterOpeningHours,
+        expiryOncePreparedHours: data.expiryOncePreparedHours,
+        fortifier: data.fortifier,
+        kitchenRecipe1: data.kitchenRecipe1,
+        kitchenRecipe2: data.kitchenRecipe2,
+        kitchenRecipe3: data.kitchenRecipe3,
+        modular: data.modular,
+        productType: data.productType,
+        shortName: data.shortName,
+        useProductAsDonorMilk: data.useProductAsDonorMilk,
+        items: []
+    }
+}
+
+export function convertToProductItemClass(data: ProductsFromFile): ProductItems {
+    return {
+        productID: data.productID,
+        description: data.description,
+        container1Barcode: data.container1Barcode,
+        container1Quantity: data.container1Quantity,
+        container1Type: data.container1Type,
+        container1Volume: data.container1Volume,
+        container2Barcode: data.container2Barcode,
+        container2Quantity: data.container2Quantity,
+        container2Type: data.container2Type,
+        container2Volume: data.container2Volume,
+        container3Barcode: data.container3Barcode,
+        container3Type: data.container3Type,
+        container3Volume: data.container3Volume,
+    }
+}
+
+export function convertManufacturers(data: Array<any>): Manufacturer[]{
+    return data.map(item => ({
+        ManufacturerID: item.ManufacturerID,
+        ManufacturerName: item.ManufacturerName,
+        ManufacturerDescription: item.ManufacturerDescription,
+        ManufacturerStatus: item.ManufacturerStatus,
+        createdBy: item.createdBy,
+        updatedBy: item.updatedBy,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+    }));
+};
+
+export function convertFormfactorTypes(data: Array<any>): FormFactorTypes[]{
+    return data.map(item => ({
+        id: item.id,
+        name: item.name,
+        categoryID: item.categoryID,
+        createdBy: item.createdBy, 
+        updatedBy: item.updatedBy,
+        created_at: item.created_at,
+        updated_at: item.created_at
+    }));
+};

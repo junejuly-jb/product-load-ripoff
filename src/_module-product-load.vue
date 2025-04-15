@@ -1,5 +1,6 @@
 <script setup>
 import ExpandCard from './components/ProductLoad/ExpandCard.vue'
+import Loader from './components/ProductLoad/Loader.vue';
 import ButtonArray from './components/ProductLoad/ButtonArray.vue';
 import { onMounted } from 'vue';
 import { useProductStore } from './stores/product';
@@ -39,7 +40,12 @@ onMounted(() => {
           ></v-pagination>
         </div>
       </div>
-      <ExpandCard />
+      <div v-if="productStore.isFetching">
+        <Loader/>
+      </div>
+      <div>
+        <ExpandCard />
+      </div>
     </div>
   </div>
 </template>

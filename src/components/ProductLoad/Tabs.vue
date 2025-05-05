@@ -5,11 +5,17 @@
         align-tabs="left"
         color="primary"
       >
+        <v-tab>Milk Banks</v-tab>
         <v-tab>Form Factor Types</v-tab>
         <v-tab>Product Manufacturers</v-tab>
       </v-tabs>
   
       <v-tabs-window v-model="tab">
+        <v-tabs-window-item>
+          <v-container fluid>
+            <MilkBankTable />
+          </v-container>
+        </v-tabs-window-item>
         <v-tabs-window-item>
           <v-container fluid>
             <FormFactorTypesTable />
@@ -28,5 +34,6 @@
 import { ref } from 'vue'
 import FormFactorTypesTable from './Tables/FormFactorTypesTable.vue';
 import ManufacturerTable from './Tables/ManufacturerTable.vue';
+import MilkBankTable from './Tables/MilkBankTable.vue'
 const tab = ref(0)
 </script>

@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { type ProductsFromFile } from '../interfaces/Product';
 
 const apiClient = axios.create({
     baseURL: 'http://localhost',
@@ -15,7 +14,10 @@ export default {
     getFormfactorTypes(){
         return apiClient.get('/api/customer/interoperability/get-formfactortypes');
     },
-    saveProduct(payload: Array<ProductsFromFile>){
+    getMilkBanks(){
+        return apiClient.get('/api/customer/interoperability/fetch-milkbanks');
+    },
+    saveProduct(payload: any){
         return apiClient.post('/api/customer/interoperability/load-products', payload, {
             headers: { "Content-Type": "application/json" }
         })

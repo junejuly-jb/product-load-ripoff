@@ -18,6 +18,7 @@ export const useProductStore = defineStore('product', () => {
   const products = ref<Array<Products>>([])
   const manufacturers = ref<Array<Manufacturer>>([]);
   const formfactorTypes = ref<Array<FormFactorTypes>>([]);
+  const milkbanks = ref<Array<Products>>([]);
   const searchTerm = ref('');
   const errors = ref<Array<String>>([]);
   const productTypes = ref<Array<String>>(['RTU','PWD','WATER','CONCENTRATE','STERILE WATER']);
@@ -38,11 +39,14 @@ export const useProductStore = defineStore('product', () => {
         const dataProducts = await ProductLoadServices.getProducts();
         const dataManufacturers = await ProductLoadServices.getManufacturers();
         const dataFormfactorTypes = await ProductLoadServices.getFormfactorTypes();
-        if(dataProducts.data.success && dataManufacturers.data.success && dataFormfactorTypes.data.success){
+        const dataMilkBanks = await ProductLoadServices.getMilkBanks();
+        if(dataProducts.data.success && dataManufacturers.data.success && dataFormfactorTypes.data.success && dataMilkBanks.data.success){
             const productsFromDB: Array<ProductsFromFile> = dataProducts.data.data
             products.value = restructureData(productsFromDB)
             manufacturers.value = convertManufacturers(dataManufacturers.data.data)
             formfactorTypes.value = convertFormfactorTypes(dataFormfactorTypes.data.data)
+            const milkBanksFromDB: Array<ProductsFromFile> = dataMilkBanks.data.data
+            milkbanks.value = restructureData(milkBanksFromDB)
             const notif: Notification = {id, message: 'Products and related tables loaded successfully.', type: 'success'} 
             addNotifs(notif)
             autoRemoveNotifs(id)
@@ -56,10 +60,6 @@ export const useProductStore = defineStore('product', () => {
         const notif: Notification = {id, message: 'Unable to retrieve product list.', type: 'error'} 
         addNotifs(notif)
     }
-
-    // products.value = JSON.parse(JSON.stringify(JSONproducts))
-    // manufacturers.value = JSON.parse(JSON.stringify(JSONmanufacturers))
-    // formfactorTypes.value = JSON.parse(JSON.stringify(JSONFormfactorTypes))
   }
 
     const setProducts = (items: Array<Products>, type: string) => {
@@ -282,6 +282,6 @@ export const useProductStore = defineStore('product', () => {
 
   return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog, searchTerm, filteredProducts,
     fileUploadDialog, errors, productTypes, supportedCaloricDensityUnits, calUnitCheckingRegEx, setProducts, currentPage, itemsPerPage, filteredPaginatedItems,
-    convertToProductsFromFile, addNotifs, autoRemoveNotifs, notifs, restructureData, isFetching
+    convertToProductsFromFile, addNotifs, autoRemoveNotifs, notifs, restructureData, isFetching, milkbanks, removeNotifs
    }
 })

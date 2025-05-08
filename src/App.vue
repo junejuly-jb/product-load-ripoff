@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TheWelcome from './_module_product_load.vue'
+import TheWelcome from './_module-product-load.vue'
 </script>
 
 <template>

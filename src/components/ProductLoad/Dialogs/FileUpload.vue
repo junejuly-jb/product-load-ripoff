@@ -68,7 +68,7 @@ import { ref } from 'vue';
 import { useProductStore } from '../../../stores/product';
 import { mdiClose } from '@mdi/js';
 import * as XLSX from 'xlsx';
-import { type ProductsFromFile, transformProductData, type Products } from '../../../interfaces/Product';
+import { type ProductsFromFile, transformProductData, type Products, type FormFactorTypes } from '../../../interfaces/Product';
 
 const productStore = useProductStore();
 const errors = ref<string[]>([]);
@@ -151,8 +151,8 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
 
     //Check if DID is not empty
     if(product.DID == 0 && (product.base == '' || product.fortifier == '' || product.modular == '')){
-        if(product.productID == ''){
-            productStore.errors.push(`No DID found at row ${row}`);
+        if(product.productID == '' && (product.productType || product.caloricValue || product.displacement)){
+            productStore.errors.push(`Invalid DID: Null or empty value in cell A${row}.`);
         }
     }
 
@@ -169,19 +169,19 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
         }
         //Check if the types is WAI compatible
         if(!productStore.productTypes.includes(product.productType.toUpperCase())){
-            productStore.errors.push(`Invalid product type at (row ${row})`);
+            productStore.errors.push(`Invalid product type in cell H${row}`);
         }
         //Check if valid caloric densities
         if(!isValidUnitString(product.caloricValue)){
-            productStore.errors.push(`Invalid unit type for caloric value at (row ${row})`);
+            productStore.errors.push(`Invalid unit '${product.caloricValue}' for caloric value in cell I${row}.`);
         }
         //Check if displacement is 0
         if(product.displacement == 0){
-            productStore.errors.push(`Product displacement cannot be 0 at (row ${row})`);
+            productStore.errors.push(`Product displacement cannot be 0 in cell J${row}`);
         }
         //Check if expiry is null or 0
         if((product.expirationAfterOpeningHours == 0 || product.expiryOncePreparedHours == 0)){
-            productStore.errors.push(`Invalid expiration value at (row ${row})`);
+            productStore.errors.push(`Invalid expiration value in cell L${row}`);
         }
         //Check if Manufacturer exists
         if(!checkIfManufacturerExists(product.category)){
@@ -192,20 +192,20 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
         if(!product.description) { productStore.errors.push(`No product description at (row ${row})`) }
         
         //Check Product Item ID is not null
-        if(!product.productID) { productStore.errors.push(`No product description at (row ${row})`) }
+        if(!product.productID) { productStore.errors.push(`Invalid Product Code: Null or empty value in cell G${row}.`) }
         
         //Check if valid form factor type base on DB
         if(product.container1Type && !isValidFormFactorType(product.container1Type)){
-            productStore.errors.push(`Form factor type (Container 1) not found at (row ${row})`)
+            productStore.errors.push(`Invalid Container 1 Type in cell N${row}`)
         }
         if(product.container2Type && !isValidFormFactorType(product.container2Type)){
-            productStore.errors.push(`Form factor type (Container 1) not found at (row ${row})`)
+            productStore.errors.push(`Invalid Container 2 Type in cell R${row}`)
         }
         if(product.container3Type && !isValidFormFactorType(product.container3Type)){
-            productStore.errors.push(`Form factor type (Container 1) not found at (row ${row})`)
+            productStore.errors.push(`Invalid Container 3 Type in cell V${row}`)
         }
 
-        const formfactorErrors = validateFormFactors(product, row)
+        const formfactorErrors = validateFormFactor(product, row)
         if(formfactorErrors.length > 0){
             formfactorErrors.forEach(item => productStore.errors.push(item))
         }
@@ -272,11 +272,26 @@ function checkForDuplicatesOnFile(data: Array<ProductsFromFile>) {
 
     data.forEach((item, index) => {
         keysToCheck.forEach(key => {
+            let column = ''
+            switch(key){
+                case 'DID':
+                    column = 'A'
+                    break;
+                case 'container1Barcode':
+                    column = 'O';
+                    break;
+                case 'container2Barcode':
+                    column = 'S';
+                    break;
+                case 'container3Barcode':
+                    column = 'W'
+                    break;
+            }
             const value = String(item[key]);
             if (key === "DID" && item.DID === 0) return;
             if (value && seen.has(value)) {
                 duplicateEntries.push({ field: key, value });
-                productStore.errors.push(`Duplicate value on row ${index + 2} (${value})`);
+                productStore.errors.push(`Duplicate ${key} value in cell ${column}${index + 2} (${value})`);
             } else {
                 seen.add(value);
             }
@@ -285,24 +300,19 @@ function checkForDuplicatesOnFile(data: Array<ProductsFromFile>) {
 }
 
 function findDuplicateProductIDs(arr: Array<ProductsFromFile>) {
-    console.log(arr);
     
     let count: Record<string, number> = {};
-    let duplicates = new Set<string>();
 
     arr.forEach((obj, index) => {
-        console.log(obj.productID);
         if (!obj.productID) return;
 
         const productID = String(obj.productID)?.trim();
         
         count[productID] = (count[productID] || 0) + 1;
         if (count[productID] > 1) {
-            productStore.errors.push(`Duplicate product ID value on row ${index + 2} (${productID})`);
+            productStore.errors.push(`Duplicate Product Code value in cell G${index + 2} (${productID})`);
         }
     });
-
-    return [...duplicates];
 }
 
 function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
@@ -326,7 +336,7 @@ function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
     if(obj.container3Type){
         if(obj.container1Quantity || obj.container2Quantity){
             if(!isWholeNumber(obj.container1Quantity,obj.container2Quantity)){
-                errors.push(`Quantity 1 is not divisible by Quantity 2 on row ${row}`)
+                errors.push(`Quantity 1 (Q${row})  is not divisible by Quantity 2 (U${row})`)
             }
         }
         else{ errors.push(`Container quantity must have a value, on row ${row}`) }
@@ -337,6 +347,13 @@ function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
         if (
             !obj.container1Type ||
             obj.container1Quantity == null ||
+            !obj.container2Type ||
+            obj.container2Quantity == null
+        ) {
+            errors.push(`Check form factor type and quantities, on row ${row}`);
+        }
+    } else {
+        if (
             !obj.container2Type ||
             obj.container2Quantity == null
         ) {
@@ -361,9 +378,78 @@ function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
                 hasValidVolumeAlready = true;
             } else if (!hasValidVolumeAlready) {
                 errors.push(`${typeKey} is defined ("${typeValue}") but ${volumeKey} is missing and no later container has volume, on row ${row}`);
+                // errors.push(`Type ${typeKey} requires a volume in cell ${row}`);
             }
         }
     } 
+
+    return errors;
+}
+
+function validateFormFactor(obj: ProductsFromFile, row: number): Array<string>{
+    let lastFormFactor = '';
+    let errors: Array<string> = [];
+
+    if(obj.container3Type){
+        lastFormFactor = obj.container3Type
+        //check if divisible container1 and 2
+        if(obj.container1Quantity && obj.container2Quantity){
+            if(!isWholeNumber(obj.container1Quantity,obj.container2Quantity)){
+                errors.push(`Container 1 Quantity is not divisible by Container 2 Quantity on row ${row}`);
+            }
+        }
+        else{
+            errors.push(`Container 1 Quantity and Container 2 Quantity must have a value on row ${row}`);
+        }
+
+        //check volume on container 1 and 2 (must be null)
+        if(obj.container1Volume){
+            errors.push(`Container 1 Volume must be null on cell (P${row})`);
+        }
+        if(obj.container2Volume){
+            errors.push(`Container 2 Volume must be null on cell (T${row})`);
+        }
+
+        //container 1 and 2 must not null.
+        if(!obj.container1Type || !obj.container2Type){
+            errors.push(`Container 1 Type or Container 2 Type must have a value ${row}`);
+        }
+    }
+    else if(obj.container2Type){
+        lastFormFactor = obj.container2Type
+        // check if container1 has quantity
+        if(!obj.container1Quantity){
+            errors.push(`Container 1 Quantity must have a value on cell (Q${row})`);
+        }
+
+        //container 2 quantity must dont have quantity 
+        if(obj.container2Quantity){
+            errors.push(`Container 2 Quantity must be null on cell (U${row})`);
+        }
+
+        // check volume on last container
+        if(!obj.container2Volume){
+            errors.push(`Container 2 Volume must have a value on cell (T${row})`);
+        }
+
+        if(!obj.container1Type){
+            errors.push(`Container 1 Type must have a value on cell (N${row})`);
+        }
+    }
+    else{
+        lastFormFactor = obj.container1Type
+        if(!obj.container1Volume){
+            errors.push(`Container 1 Volume must have a value on cell (P${row})`);
+        }
+        if(!obj.container1Type){
+            errors.push(`Container 1 Type must have a value on cell (N${row})`);
+        }
+    }
+
+    // check if last formfactor is not a case or carton
+    if(!isReceivableFormFactor(lastFormFactor)){
+        errors.push(`No receivable form factors on row ${row}`);
+    }
 
     return errors;
 }
@@ -376,4 +462,11 @@ function isValidFormFactorType(value: string): boolean{
     return productStore.formfactorTypes.some(obj => obj.name === value);
 }
 
+function isReceivableFormFactor(value: string): boolean{
+    const formfactor = productStore.formfactorTypes.find(item => item.name == value)
+    if(formfactor){
+        return formfactor.categoryID == 2 ? true : false
+    }
+    return false;
+}
 </script>

@@ -237,7 +237,11 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
 
 //Check if the row is a main product details else product items
 const isMainDetails = (product: ProductsFromFile) => {
-    if(product.DID !== 0 && product.productType) return true;
+    // if(product.DID !== 0 && product.productType) return true;
+    // return false;
+    if(product.DID || product.DID !== 0 || product.base || product.fortifier || product.modular || product.productType || product.caloricValue || product.displacement){
+        return true;
+    }
     return false;
 }
 
@@ -396,7 +400,7 @@ function validateFormFactor(obj: ProductsFromFile, row: number): Array<string>{
 
     // check if last formfactor is not a case or carton
     if(!isReceivableFormFactor(lastFormFactor)){
-        errors.push(`Product Code "${obj.productID}" requires lowest form factor`);
+        errors.push(`Product Code "${obj.productID}" requires lowest form factor on row ${row}`);
     }
 
     return errors;

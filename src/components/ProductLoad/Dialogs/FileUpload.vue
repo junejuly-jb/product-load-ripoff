@@ -132,7 +132,8 @@ const readExcel = (file: File) => {
         
         checkForDuplicatesOnFile(transformedData); //Check for duplicate barcodes (DID and Containers 1, 2, 3)
         findDuplicateProductIDs(transformedData); //Check for duplicated Product ID on its column
-
+        findDuplicateProductNames(transformedData); // Check for duplicate product name
+        
         if(productStore.errors.length == 0){
             const restructedData = productStore.restructureData(transformedData)
             loadedProducts.value = restructedData
@@ -191,6 +192,28 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
         //Check Product name is not null
         if(!product.description) { productStore.errors.push(`No product description at (row ${row})`) }
         
+        //check if product name has leading and trailing spaces
+        if(checkLeadingTrailingSpaces(product.description)){ productStore.errors.push(`Leading or trailing spaces detected in "Description" in cell (E${row})`) }
+        
+        //check if product type has leading and trailing spaces
+        if(checkLeadingTrailingSpaces(product.productType)){ productStore.errors.push(`Leading or trailing spaces detected in "Product Type" in cell (H${row})`) }
+
+        //check if product ID has leading and trailing spaces
+        if(checkLeadingTrailingSpaces(product.productID)){ productStore.errors.push(`Leading or trailing spaces detected in "Product ID" in cell (G${row})`) }
+
+        //check if Category has leading and trailing spaces
+        if(checkLeadingTrailingSpaces(product.category)){ productStore.errors.push(`Leading or trailing spaces detected in "Category" in cell (Y${row})`) }
+
+        //check if Container 1 Type has leading and trailing spaces
+        if(checkLeadingTrailingSpaces(product.container1Type)){ productStore.errors.push(`Leading or trailing spaces detected in "Container 1 Type" in cell (N${row})`) }
+
+        //check if Container 2 Type has leading and trailing spaces
+        if(checkLeadingTrailingSpaces(product.container2Type)){ productStore.errors.push(`Leading or trailing spaces detected in "Container 2 Type" in cell (R${row})`) }
+
+        //check if Container 3 Type has leading and trailing spaces
+        if(checkLeadingTrailingSpaces(product.container3Type)){ productStore.errors.push(`Leading or trailing spaces detected in "Container 3 Type" in cell (V${row})`) }
+
+
         //Check Product Item ID is not null
         if(!product.productID) { productStore.errors.push(`Invalid Product Code: Null or empty value in cell G${row}.`) }
         
@@ -209,10 +232,6 @@ const checkForErrors = (product: ProductsFromFile, index: number) => {
         if(formfactorErrors.length > 0){
             formfactorErrors.forEach(item => productStore.errors.push(item))
         }
-        //Check if case and quantity has value
-        // if(!validateCaseAndBarcode(product)) { productStore.errors.push(`Verify container type and container quantity at (row ${row})`) }
-        
-        //Check if the last barcode is type 2
     }
 }
 
@@ -315,77 +334,6 @@ function findDuplicateProductIDs(arr: Array<ProductsFromFile>) {
     });
 }
 
-function validateFormFactors(obj: ProductsFromFile, row: number): Array<string>{
-    const supportedUnits = ["ml", "l", "oz", "fl oz", "qt", "g", "lb"];
-    let hasValidVolumeAlready = false;
-    let errors: Array<string> = [];
-
-    //check if empty vice versa
-    if(obj.container1Type == ''){
-        if(obj.container2Type){ errors.push(`Container 1 must have value, child detected on row ${row}`) }
-        if(obj.container3Type){ errors.push(`Container 1 must have value, child detected on row ${row}`) }
-        if(obj.container1Quantity || obj.container1Barcode) {errors.push(`Container 1 type cannot be null ${row}`)}
-    }
-    if (obj.container2Type == '') {
-        if(obj.container1Type){ errors.push(`Container 2 must have value, child detected on row ${row}`) }
-        if(obj.container3Type){ errors.push(`Container 2 must have value, child detected on row ${row}`) }
-        if(obj.container2Quantity || obj.container2Barcode) {errors.push(`Container 2 type cannot be null ${row}`)}
-    }
-
-    //check if divisible container 1 and 2
-    if(obj.container3Type){
-        if(obj.container1Quantity || obj.container2Quantity){
-            if(!isWholeNumber(obj.container1Quantity,obj.container2Quantity)){
-                errors.push(`Quantity 1 (Q${row})  is not divisible by Quantity 2 (U${row})`)
-            }
-        }
-        else{ errors.push(`Container quantity must have a value, on row ${row}`) }
-    }
-
-    //TODO: check if container has quantity
-    if (obj.container3Type) {
-        if (
-            !obj.container1Type ||
-            obj.container1Quantity == null ||
-            !obj.container2Type ||
-            obj.container2Quantity == null
-        ) {
-            errors.push(`Check form factor type and quantities, on row ${row}`);
-        }
-    } else {
-        if (
-            !obj.container2Type ||
-            obj.container2Quantity == null
-        ) {
-            errors.push(`Check form factor type and quantities, on row ${row}`);
-        }
-    }
-
-    //TODO: Check if proper volume is applied.
-    for (let i = 3; i >= 1; i--) {
-        const typeKey = `container${i}Type`;
-        const volumeKey = `container${i}Volume`;
-
-        const typeValue = obj[typeKey as keyof ProductsFromFile];
-        const volumeValue = String(obj[volumeKey as keyof ProductsFromFile])?.trim();
-
-        if (volumeValue && !typeValue) {
-            errors.push(`${volumeKey} is defined ("${volumeValue}") but ${typeKey} is missing, on row ${row}`);
-        }
-
-        if (typeValue) {
-            if (volumeValue) {
-                hasValidVolumeAlready = true;
-            } else if (!hasValidVolumeAlready) {
-                errors.push(`${typeKey} is defined ("${typeValue}") but ${volumeKey} is missing and no later container has volume, on row ${row}`);
-                // errors.push(`Type ${typeKey} requires a volume in cell ${row}`);
-            }
-        }
-    } 
-
-    return errors;
-}
-
 function validateFormFactor(obj: ProductsFromFile, row: number): Array<string>{
     let lastFormFactor = '';
     let errors: Array<string> = [];
@@ -395,7 +343,7 @@ function validateFormFactor(obj: ProductsFromFile, row: number): Array<string>{
         //check if divisible container1 and 2
         if(obj.container1Quantity && obj.container2Quantity){
             if(!isWholeNumber(obj.container1Quantity,obj.container2Quantity)){
-                errors.push(`Container 1 Quantity is not divisible by Container 2 Quantity on row ${row}`);
+                errors.push(`Quantity 1 (Q${row}) is not divisible by Quantity 2 (U${row})`);
             }
         }
         else{
@@ -433,7 +381,7 @@ function validateFormFactor(obj: ProductsFromFile, row: number): Array<string>{
         }
 
         if(!obj.container1Type){
-            errors.push(`Container 1 Type must have a value on cell (N${row})`);
+            errors.push(`Invalid Container Type: Null or empty value in cell (N${row})`);
         }
     }
     else{
@@ -442,13 +390,13 @@ function validateFormFactor(obj: ProductsFromFile, row: number): Array<string>{
             errors.push(`Container 1 Volume must have a value on cell (P${row})`);
         }
         if(!obj.container1Type){
-            errors.push(`Container 1 Type must have a value on cell (N${row})`);
+            errors.push(`Invalid Container Type: Null or empty value in cell (N${row})`);
         }
     }
 
     // check if last formfactor is not a case or carton
     if(!isReceivableFormFactor(lastFormFactor)){
-        errors.push(`No receivable form factors on row ${row}`);
+        errors.push(`Product Code "${obj.productID}" requires lowest form factor`);
     }
 
     return errors;
@@ -469,4 +417,24 @@ function isReceivableFormFactor(value: string): boolean{
     }
     return false;
 }
+
+function findDuplicateProductNames(value: Array<ProductsFromFile>){
+    const filtered = value.filter(item => item.DID !== 0);
+
+    const seen = new Set();
+
+    filtered.forEach(item => {
+        const key = item.description
+        if (seen.has(key)) {
+            productStore.errors.push(`Duplicate Product Name "${key}" exists on multiple cells.`);
+        } else {
+            seen.add(key);
+        }
+    });
+}
+
+function checkLeadingTrailingSpaces(value: string): boolean{
+    return /^\s|\s$/.test(value);
+}
+
 </script>

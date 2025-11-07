@@ -3,7 +3,9 @@
         <v-btn :disabled="productStore.isFetching" class="mr-3" color="primary" @click="productStore.productRelatedTableDialog = true">Show Product Tables <v-icon :icon="mdiEye" end></v-icon></v-btn>
         <v-btn :disabled="isSaving || productStore.isFetching" class="mr-3" color="primary" @click="productStore.fileUploadDialog = true">Upload <v-icon :icon="mdiUpload" end></v-icon></v-btn>
         <v-btn :disabled="isSaving || productStore.isFetching" class="mr-3" color="primary" @click="handleDownload">Download <v-icon :icon="mdiDownload" end></v-icon></v-btn>
-        <v-btn :disabled="isSaving || productStore.isFetching" class="mr-3" color="success" @click="handleSave">{{ isSaving ? 'Saving...' : 'Save' }}<v-icon :icon="mdiCheck" end></v-icon></v-btn>
+        <div v-if="productStore.checkIfHasAccessToSaveButton()">
+            <v-btn :disabled="isSaving || productStore.isFetching" class="mr-3" color="success" @click="handleSave">{{ isSaving ? 'Saving...' : 'Save' }}<v-icon :icon="mdiCheck" end></v-icon></v-btn>
+        </div>
     </div>
 </template>
 <script lang="ts" setup>

@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { 
     type Manufacturer, 
@@ -12,6 +12,7 @@ import {
     convertFormfactorTypes
 } from '../interfaces/Product'
 import { type Notification } from '../interfaces/Notification'
+import { type AppSetting } from '../interfaces/AppSetting'
 import ProductLoadServices from '../services/ProductLoadServices'
 
 export const useProductStore = defineStore('product', () => {
@@ -28,10 +29,22 @@ export const useProductStore = defineStore('product', () => {
   const itemsPerPage = ref(15)
   const notifs = ref<Array<Notification>>([])
   const isFetching = ref(true)
+  const appsettings = ref<AppSetting | null>(null);
 
   //dialogs
   const productRelatedTableDialog = ref(false);
   const fileUploadDialog = ref(false);
+
+    const checkIfHasAccessToSaveButton = () => {
+        let hasAccess = true
+        const settings = appsettings.value;
+
+    if (settings?.environment === 'PRODUCTION' || settings?.environment === 'UAT' || settings?.environment === 'IMP') {
+        hasAccess = false;
+    }
+
+    return hasAccess;
+    }
   
   const getProductsWithRelatedTables = async () => {
     const id = Date.now()
@@ -280,8 +293,25 @@ export const useProductStore = defineStore('product', () => {
         return loadedProducts;
     }
 
+    const getAppSettings = async () => {
+        const id = Date.now()
+        try {
+            const data = await ProductLoadServices.getAppSettings();
+            if(data?.data?.success && data.data.settings){
+                appsettings.value = data.data.settings
+            }
+            else {
+                const notif: Notification = {id, message: 'Unable to fetch app settings.', type: 'error'} 
+                addNotifs(notif)
+            }
+        } catch (error) {
+            const notif: Notification = {id, message: 'Unable to fetch app settings.', type: 'error'} 
+        }
+    }
+
   return { products, manufacturers, formfactorTypes, getProductsWithRelatedTables, productRelatedTableDialog, searchTerm, filteredProducts,
     fileUploadDialog, errors, productTypes, supportedCaloricDensityUnits, calUnitCheckingRegEx, setProducts, currentPage, itemsPerPage, filteredPaginatedItems,
-    convertToProductsFromFile, addNotifs, autoRemoveNotifs, notifs, restructureData, isFetching, milkbanks, removeNotifs
+    convertToProductsFromFile, addNotifs, autoRemoveNotifs, notifs, restructureData, isFetching, milkbanks, removeNotifs, getAppSettings, appsettings,
+    checkIfHasAccessToSaveButton
    }
 })

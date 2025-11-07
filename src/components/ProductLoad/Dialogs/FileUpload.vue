@@ -41,7 +41,7 @@
                     <v-alert density="compact" color="error">{{ error }}</v-alert>
                 </div>
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions v-if="productStore.checkIfHasAccessToSaveButton()">
                 <v-spacer></v-spacer>
                 <div v-if="successFileUpload && productStore.products.length > 0">
                     <v-btn

@@ -12,6 +12,7 @@ import Notification from './components/ProductLoad/Notification.vue';
 const productStore = useProductStore();
 
 onMounted(() => {
+  productStore.getAppSettings()
   productStore.getProductsWithRelatedTables()
 })
 </script>
